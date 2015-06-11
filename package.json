@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "express": "latest",
-    "ejs": "latest"
+    "ejs": "latest",
+    "nedb": "latest"
   },
   "engines": {
     "node": "latest"
