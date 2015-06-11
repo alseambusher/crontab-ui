@@ -3,6 +3,8 @@ var Datastore = require('nedb');
 var db = new Datastore({ filename: __dirname + '/crontabs/crontab.db' });
 db.loadDatabase(function (err) {
 });
+var exec = require('child_process').exec;
+var fs = require('fs');
 
 crontab = function(command, schedule, stopped){
 	var data = {};
@@ -19,11 +21,23 @@ exports.create_new = function(command, schedule){
 }
 
 exports.crontabs = function(callback){
-	var finished = false;
 	db.find({}, function(err, docs){
-		finished = true;
 		callback(docs);
 	});
 }
 
+exports.set_crontab = function(){
+	exports.crontabs( function(tabs){
+		var crontab_string = "";
+		tabs.forEach(function(tab){
+			if(!tab.stopped){
+				crontab_string += tab.schedule + " " + tab.command + "\n";
+			}
+		});
+		fs.writeFile("/tmp/crontab", crontab_string, function(err) {
+			//couldnt write
+		}); 
 
+		exec("crontab /tmp/crontab");
+	});
+}
