@@ -1,0 +1,80 @@
+<!doctype html>
+<head>
+<title>Crontab UI</title>
+<script src="jquery.js"></script>
+<script src="bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap.min.css" />
+</head>
+<body>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Crontab UI</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Import</a></li>
+        <li class="active"><a href="#">Downloads<span class="sr-only">(current)</span></a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Backups <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+	    <!-- TODO -->
+            <li><a href="#">None</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="https://github.com/alseambusher/crontab-ui">Fork me on Github</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+<div class="container">
+	<h2>Jobs</h2>
+	<table class="table">
+	<tr>
+		<th>Job</th>
+		<th>Time</th>
+		<th>Last Modified</th>
+		<th></th>
+	</tr>
+	<tr>
+		<td>Sample</td>
+		<td> testing </td>
+		<td>ascasdcas</td>
+		<td>
+			<a class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
+			<a class="btn btn-info"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop</a>
+			<a class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+		</td>
+	</tr>
+
+	<tr style="background:#3A6DA6;color:#fff">
+		<td>/var/spool/cron/crontab -s -l -d</td>
+		<td> testing </td>
+		<td>ascasdcas</td>
+		<td>
+			<a class="btn btn-info"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</a>
+			<a class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+		</td>
+	</tr>
+	</table>
+	<a class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
+	<a class="btn btn-info"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
+	<a class="btn btn-info"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
+	<span id="save-reset">
+		<a class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reset</a>
+		<a class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</a>
+	</span>
+</div>
+</body>
+</html>
