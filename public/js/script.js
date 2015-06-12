@@ -1,10 +1,9 @@
 /*********** MessageBox ****************/
 // simply show info.  Only close button
 function infoMessageBox(message, title){
-	$("#modal-body").html(message);
-	$("#modal-title").html(title);
-	$("#modal-button").hide();
-	$("#popup").modal('show');
+	$("#info-body").html(message);
+	$("#info-title").html(title);
+	$("#info-popup").modal('show');
 }
 // modal with full control
 function messageBox(body, title, ok_text, close_text, callback){
@@ -23,23 +22,39 @@ function messageBox(body, title, ok_text, close_text, callback){
 function deleteJob(_id){
 	// TODO fix this. pass callback properly
 	messageBox("<p> Do you want to delete this Job? </p>", "Confirm delete", null, null, function(){
-		console.log("delete job");
+		$.post(routes.remove, {_id: _id}, function(){
+			location.reload();
+		});
 	});
 }
 
 function stopJob(_id){
 	messageBox("<p> Do you want to stop this Job? </p>", "Confirm stop job", null, null, function(){
-		console.log("stop job");
+		$.post(routes.stop, {_id: _id}, function(){
+			location.reload();
+		});
 	});
 }
 
 function startJob(_id){
 	messageBox("<p> Do you want to start this Job? </p>", "Confirm start job", null, null, function(){
-		console.log("start job");
+		$.post(routes.start, {_id: _id}, function(){
+			location.reload();
+		});
+	});
+}
+
+function setCrontab(){
+	messageBox("<p> Do you want to set the crontab file? </p>", "Confirm crontab setup", null, null, function(){
+		$.get(routes.crontab, {}, function(){
+			// TODO show only if success
+			infoMessageBox("Successfuly set crontab file!","Information");
+		});
 	});
 }
 
 function editJob(_id){
+	console.log(_id);
 	var job = null;
 	crontabs.forEach(function(crontab){
 		if(crontab._id == _id)
@@ -48,7 +63,7 @@ function editJob(_id){
 	if(job){
 		$("#job").modal("show");
 		$("#job-name").val(job.name);
-		$("#job-command").val(job.command);
+		$("#job-command").val(job.command.replace("\"","\\\""));
 		// if macro not used
 		if(job.schedule.indexOf("@") != 0){
 			var components = job.schedule.split(" ");
@@ -65,7 +80,7 @@ function editJob(_id){
 
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post("/save", {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id}, function(){
+		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id}, function(){
 			location.reload();
 		})
 	});
@@ -86,12 +101,19 @@ function newJob(){
 	job_string();
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post("/save", {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1}, function(){
+		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1}, function(){
 			location.reload();
 		})
 	});
 }
 
+function doBackup(){
+	messageBox("<p> Do you want to take backup? </p>", "Confirm backup", null, null, function(){
+		$.get(routes.backup, {}, function(){
+			location.reload();
+		});
+	});
+}
 
 // script corresponding to job popup management
 var schedule = "";
@@ -105,4 +127,5 @@ function set_schedule(){
 	schedule = $("#job-minute").val() + " " +$("#job-hour").val() + " " +$("#job-day").val() + " " +$("#job-month").val() + " " +$("#job-week").val();
 	job_string();
 }
+// popup management ends
 

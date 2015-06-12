@@ -7,10 +7,13 @@
 <link rel="stylesheet" href="bootstrap.min.css" />
 <script type="text/javascript">
 	var crontabs = [];
+	var routes = [];
 	$(function () {
 		// initialize tooltips
 		$('[data-toggle="tooltip"]').tooltip();
+		// TODO handle the commands with quotes
 		crontabs = JSON.parse('<%- crontabs %>');
+		routes = JSON.parse('<%- routes %>');
 	})
 </script>
 </head>
@@ -61,10 +64,10 @@
 
 	</table>
 	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
-	<a class="btn btn-info"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
+	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
 	<a class="btn btn-info"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
 	<a class="btn btn-info"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>
-	<a class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
+	<a class="btn btn-success" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
 </div>
 <div>
 </div>
