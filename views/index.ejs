@@ -2,55 +2,72 @@
 <head>
 <title>Crontab UI</title>
 <script src="jquery.js"></script>
+<script src="script.js"></script>
 <script src="bootstrap.min.js"></script>
 <link rel="stylesheet" href="bootstrap.min.css" />
+<script type="text/javascript">
+	var crontabs = [];
+	$(function () {
+		// initialize tooltips
+		$('[data-toggle="tooltip"]').tooltip();
+		crontabs = JSON.parse('<%- crontabs %>');
+	})
+</script>
 </head>
 <body>
 <% include navbar %>
 <div class="container">
-	<h2>Jobs</h2>
+	<h2>Cronjobs</h2>
 	<table class="table">
 	<tr>
+		<th></th>
 		<th>Job</th>
 		<th>Time</th>
 		<th>Last Modified</th>
 		<th></th>
 	</tr>
-	<% crontabs.forEach(function(crontab){ %>
+	<% JSON.parse(crontabs).forEach(function(crontab){ %>
+		<!-- color based on crontab state -->
 		<% if (!crontab.stopped) { %>
 			<tr>
-				<td><%= crontab.command %></td>
-				<td><%= crontab.schedule %></td>
-				<td><%= crontab.timestamp %></td>
-				<td>
-					<a class="btn btn-primary"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
-					<a class="btn btn-info"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop</a>
-					<a class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-				</td>
-			</tr>
 		<% } else { %>
 			<tr style="background:#3A6DA6;color:#fff">
+		<% } %>
+
+				<td>
+					<% if (crontab.name) { %>
+					<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.name %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+					<% } %>
+				</td>
 				<td><%= crontab.command %></td>
 				<td><%= crontab.schedule %></td>
 				<td><%= crontab.timestamp %></td>
 				<td>
-					<a class="btn btn-info"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</a>
-					<a class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+
+		<!-- controls based on crontab state -->
+		<% if (!crontab.stopped) { %>
+					<a class="btn btn-primary" onclick="editJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
+					<a class="btn btn-info" onclick="stopJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Stop</a>
+		<% } else { %>
+					<a class="btn btn-info" onclick="startJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</a>
+		<% } %>
+					<a class="btn btn-danger" onclick="deleteJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+
 				</td>
 			</tr>
-		<% } %>
 	<% }); %>
 
 
 
 	</table>
-	<a class="btn btn-primary"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
+	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
 	<a class="btn btn-info"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
 	<a class="btn btn-info"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
-	<span id="save-reset">
-		<a class="btn btn-danger"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reset</a>
-		<a class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save</a>
-	</span>
+	<a class="btn btn-info"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>
+	<a class="btn btn-success"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
 </div>
+<div>
+</div>
+<% include popup.ejs %>
 </body>
 </html>

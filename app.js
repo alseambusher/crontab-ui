@@ -18,11 +18,13 @@ app.set('port', (process.env.PORT || 8000));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
+	//crontab.create_new("/usr/bin/find", "0        2          12             *                *");
+	//crontab.create_new("/sbin/ping -c 1 192.168.0.1 > /dev/null", "*       *       *       *       *");
 	crontab.crontabs( function(docs){
 		console.log(docs);
 		res.render('index', {
 			routes : routes,
-			crontabs : docs
+			crontabs : JSON.stringify(docs)
 		});
 	});
 })

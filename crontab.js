@@ -6,8 +6,9 @@ db.loadDatabase(function (err) {
 var exec = require('child_process').exec;
 var fs = require('fs');
 
-crontab = function(command, schedule, stopped){
+crontab = function(name, command, schedule, stopped){
 	var data = {};
+	data.name = name;
 	data.command = command;
 	data.schedule = schedule;
 	data.stopped = stopped;
@@ -15,8 +16,8 @@ crontab = function(command, schedule, stopped){
 	return data;
 }
 
-exports.create_new = function(command, schedule){
-	var tab = crontab(command, schedule, false);
+exports.create_new = function(name, command, schedule){
+	var tab = crontab(name, command, schedule, false);
 	db.insert(tab);
 }
 
@@ -35,9 +36,8 @@ exports.set_crontab = function(){
 			}
 		});
 		fs.writeFile("/tmp/crontab", crontab_string, function(err) {
-			//couldnt write
+			exec("crontab /tmp/crontab");
 		}); 
 
-		exec("crontab /tmp/crontab");
 	});
 }
