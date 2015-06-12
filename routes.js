@@ -1,5 +1,6 @@
 exports.routes = {
 	"root" : "/",
 	"downloads" : "/downloads",
-	"save" : "/save"
+	"save" : "/save",
+	"crontab" : "/crontab"
 }

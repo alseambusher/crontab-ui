@@ -11,7 +11,7 @@ crontab = function(name, command, schedule, stopped){
 	data.name = name;
 	data.command = command;
 	data.schedule = schedule;
-	data.stopped = stopped;
+	if(stopped != null) data.stopped = stopped;
 	data.timestamp = (new Date()).toString();
 	return data;
 }
@@ -21,12 +21,14 @@ exports.create_new = function(name, command, schedule){
 	db.insert(tab);
 }
 
+exports.update = function(data){
+	db.update({_id: data._id}, crontab(data.name, data.command, data.schedule, null));
+}
 exports.crontabs = function(callback){
 	db.find({}, function(err, docs){
 		callback(docs);
 	});
 }
-
 exports.set_crontab = function(){
 	exports.crontabs( function(tabs){
 		var crontab_string = "";

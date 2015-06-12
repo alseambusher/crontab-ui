@@ -52,7 +52,6 @@ function editJob(_id){
 		// if macro not used
 		if(job.schedule.indexOf("@") != 0){
 			var components = job.schedule.split(" ");
-			console.log(components);
 			$("#job-minute").val(components[0]);
 			$("#job-hour").val(components[1]);
 			$("#job-day").val(components[2]);
@@ -63,10 +62,34 @@ function editJob(_id){
 		job_command = job.command;
 		job_string();
 	}
+
+	$("#job-save").click(function(){
+		// TODO good old boring validations
+		$.post("/save", {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id}, function(){
+			location.reload();
+		})
+	});
 }
 
 function newJob(){
+	schedule = ""
+	job_command = ""
+	$("#job-minute").val("*");
+	$("#job-hour").val("*");
+	$("#job-day").val("*");
+	$("#job-month").val("*");
+	$("#job-week").val("*");
+
 	$("#job").modal("show");
+	$("#job-name").val("");
+	$("#job-command").val("");
+	job_string();
+	$("#job-save").click(function(){
+		// TODO good old boring validations
+		$.post("/save", {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1}, function(){
+			location.reload();
+		})
+	});
 }
 
 
@@ -82,3 +105,4 @@ function set_schedule(){
 	schedule = $("#job-minute").val() + " " +$("#job-hour").val() + " " +$("#job-day").val() + " " +$("#job-month").val() + " " +$("#job-week").val();
 	job_string();
 }
+

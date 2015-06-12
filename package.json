@@ -9,7 +9,8 @@
   "dependencies": {
     "express": "latest",
     "ejs": "latest",
-    "nedb": "latest"
+    "nedb": "latest",
+    "body-parser": "latest"
   },
   "engines": {
     "node": "latest"
