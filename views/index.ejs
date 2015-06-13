@@ -20,14 +20,29 @@
 <% include navbar %>
 <div class="container">
 	<h2>Cronjobs</h2>
+	
+	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
+	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
+	<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
+		<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
+	</form>
+	<a class="btn btn-warning" onclick="import_db()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import</a>
+	<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
+	<!--<a class="btn btn-info" onclick="import_crontab()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>-->
+	<a class="btn btn-success" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
+	<br/>
+	<br/>
+
 	<table class="table">
 	<tr>
+		<th>Id</th>
 		<th></th>
 		<th>Job</th>
 		<th>Time</th>
 		<th>Last Modified</th>
 		<th></th>
 	</tr>
+	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
 		<!-- color based on crontab state -->
 		<% if (!crontab.stopped) { %>
@@ -35,6 +50,11 @@
 		<% } else { %>
 			<tr style="background:#3A6DA6;color:#fff">
 		<% } %>
+				<td>
+					<%= index %>.
+					<% index += 1 %>
+					<%= crontab._id %>
+				</td>
 
 				<td>
 					<% if (crontab.name) { %>
@@ -42,7 +62,7 @@
 					<% } %>
 				</td>
 				<td><%= crontab.command %></td>
-				<td><%= crontab.schedule %></td>
+				<td><span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab.next %>"><%= crontab.schedule %></span></td>
 				<td><%= crontab.timestamp %></td>
 				<td>
 
@@ -62,11 +82,6 @@
 
 
 	</table>
-	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
-	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
-	<a class="btn btn-info"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
-	<a class="btn btn-info"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>
-	<a class="btn btn-success" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
 </div>
 <% include popup.ejs %>
 </body>

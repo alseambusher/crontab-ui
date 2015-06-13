@@ -22,11 +22,13 @@
 	<h2><%= db %></h2>
 	<table class="table">
 	<tr>
+		<th>Id</th>
 		<th></th>
 		<th>Job</th>
 		<th>Time</th>
 		<th>Last Modified</th>
 	</tr>
+	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
 		<!-- color based on crontab state -->
 		<% if (!crontab.stopped) { %>
@@ -34,6 +36,12 @@
 		<% } else { %>
 			<tr style="background:#3A6DA6;color:#fff">
 		<% } %>
+
+				<td>
+					<%= index %>.
+					<% index += 1 %>
+					<%= crontab._id %>
+				</td>
 
 				<td>
 					<% if (crontab.name) { %>

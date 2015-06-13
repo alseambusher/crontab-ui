@@ -14,9 +14,8 @@ Editing the plain text crontab is error prone for managing jobs, e.g., adding jo
 TODO
 ====
 1. Run jobs as different user
-2. Online backup
-3. Profiling jobs 
-4. Logs
-
+2. Profiling jobs 
+3. Logs
+4. Importing from existing crontab file
 
 

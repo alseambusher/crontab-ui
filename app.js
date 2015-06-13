@@ -3,6 +3,12 @@ var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
 
+var path = require('path');
+var mime = require('mime');
+var fs = require('fs');
+var busboy = require('connect-busboy'); // for file upload
+
+
 // include the routes
 var routes = require("./routes").routes;
 
@@ -14,6 +20,7 @@ app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 })); 
+app.use(busboy()) // to support file uploads
 
 // include all folders
 app.use(express.static(__dirname + '/public'));
@@ -89,6 +96,38 @@ app.get(routes.delete_backup, function(req, res) {
 
 app.get(routes.restore_backup, function(req, res) {
 	crontab.restore(req.query.db);
+	res.end();
+})
+
+app.get(routes.export, function(req, res) {
+	var file = __dirname + '/crontabs/crontab.db';
+
+	var filename = path.basename(file);
+	var mimetype = mime.lookup(file);
+
+	res.setHeader('Content-disposition', 'attachment; filename=' + filename);
+	res.setHeader('Content-type', mimetype);
+
+	var filestream = fs.createReadStream(file);
+	filestream.pipe(res);
+})
+
+
+app.post(routes.import, function(req, res) {
+	var fstream;
+	req.pipe(req.busboy);
+	req.busboy.on('file', function (fieldname, file, filename) {
+		fstream = fs.createWriteStream(__dirname + '/crontabs/crontab.db');
+		file.pipe(fstream);
+		fstream.on('close', function () {
+			crontab.reload_db();
+			res.redirect(routes.root);
+        	});
+    	});
+})
+
+app.get(routes.import_crontab, function(req, res) {
+	crontab.import_crontab()
 	res.end();
 })
 

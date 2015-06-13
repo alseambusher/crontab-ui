@@ -10,7 +10,10 @@
     "express": "latest",
     "ejs": "latest",
     "nedb": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "mime": "latest",
+    "cron-parser": "latest",
+    "connect-busboy": "latest"
   },
   "engines": {
     "node": "latest"

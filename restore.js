@@ -8,7 +8,7 @@ exports.crontabs = function(db_name, callback){
 	var db = new Datastore({ filename: __dirname + '/crontabs/' + db_name });
 	db.loadDatabase(function (err) {
 	});
-	db.find({}, function(err, docs){
+	db.find({}).sort({ created: -1 }).exec(function(err, docs){
 		callback(docs);
 	});
 }
