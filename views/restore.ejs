@@ -1,0 +1,58 @@
+<!doctype html>
+<head>
+<title>Crontab UI</title>
+<script src="jquery.js"></script>
+<script src="script.js"></script>
+<script src="bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap.min.css" />
+<script type="text/javascript">
+	var crontabs = [];
+	var routes = [];
+	$(function () {
+		// initialize tooltips
+		$('[data-toggle="tooltip"]').tooltip();
+		// TODO handle the commands with quotes
+		crontabs = JSON.parse('<%- crontabs %>');
+		routes = JSON.parse('<%- routes %>');
+	})
+</script>
+</head>
+<body>
+<% include navbar %>
+<div class="container">
+	<h2><%= db %></h2>
+	<table class="table">
+	<tr>
+		<th></th>
+		<th>Job</th>
+		<th>Time</th>
+		<th>Last Modified</th>
+	</tr>
+	<% JSON.parse(crontabs).forEach(function(crontab){ %>
+		<!-- color based on crontab state -->
+		<% if (!crontab.stopped) { %>
+			<tr>
+		<% } else { %>
+			<tr style="background:#3A6DA6;color:#fff">
+		<% } %>
+
+				<td>
+					<% if (crontab.name) { %>
+					<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.name %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+					<% } %>
+				</td>
+				<td><%= crontab.command %></td>
+				<td><%= crontab.schedule %></td>
+				<td><%= crontab.timestamp %></td>
+			</tr>
+	<% }); %>
+
+
+
+	</table>
+	<a class="btn btn-primary" onclick="restore_backup('<%= db %>')"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Restore</a>
+	<a class="btn btn-danger" onclick="delete_backup('<%= db %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+</div>
+<% include popup.ejs %>
+</body>
+</html>

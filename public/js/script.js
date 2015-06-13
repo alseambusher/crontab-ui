@@ -115,6 +115,23 @@ function doBackup(){
 	});
 }
 
+function delete_backup(db_name){
+	messageBox("<p> Do you want to delete this backup? </p>", "Confirm delete", null, null, function(){
+		$.get(routes.delete_backup, {db: db_name}, function(){
+			location = routes.root;
+		});
+	});
+}
+
+function restore_backup(db_name){
+	messageBox("<p> Do you want to restore this backup? </p>", "Confirm restore", null, null, function(){
+		$.get(routes.restore_backup, {db: db_name}, function(){
+			location = routes.root;
+		});
+	});
+}
+
+
 // script corresponding to job popup management
 var schedule = "";
 var job_command = "";

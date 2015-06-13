@@ -1,6 +1,7 @@
 var express = require('express');
 var app = express();
 var crontab = require("./crontab");
+var restore = require("./restore");
 
 // include the routes
 var routes = require("./routes").routes;
@@ -24,8 +25,6 @@ app.set('port', (process.env.PORT || 8000));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
-	//crontab.create_new("/usr/bin/find", "0        2          12             *                *");
-	//crontab.create_new("/sbin/ping -c 1 192.168.0.1 > /dev/null", "*       *       *       *       *");
 	crontab.crontabs( function(docs){
 		res.render('index', {
 			routes : JSON.stringify(routes),
@@ -70,6 +69,29 @@ app.get(routes.backup, function(req, res) {
 	crontab.backup();
 	res.end();
 })
+
+app.get(routes.restore, function(req, res) {
+	// get all the crontabs
+	restore.crontabs(req.query.db, function(docs){
+		res.render('restore', {
+			routes : JSON.stringify(routes),
+			crontabs : JSON.stringify(docs),
+			backups : crontab.get_backup_names(),
+			db: req.query.db
+		});
+	});
+})
+
+app.get(routes.delete_backup, function(req, res) {
+	restore.delete(req.query.db);
+	res.end();
+})
+
+app.get(routes.restore_backup, function(req, res) {
+	crontab.restore(req.query.db);
+	res.end();
+})
+
 app.listen(app.get('port'), function() {
   console.log("Crontab UI is running at localhost:" + app.get('port'))
 })
