@@ -71,5 +71,9 @@ exports.backup = function(){
 
 exports.restore = function(db_name){
 	fs.createReadStream( __dirname + '/crontabs/' + db_name).pipe(fs.createWriteStream( __dirname + '/crontabs/crontab.db'));
-	db.loadDatabase();
+	db.loadDatabase(); // reload the database
+}
+
+exports.import = function(){
+	//TODO
 }

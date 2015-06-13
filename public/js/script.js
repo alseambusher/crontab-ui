@@ -63,7 +63,7 @@ function editJob(_id){
 	if(job){
 		$("#job").modal("show");
 		$("#job-name").val(job.name);
-		$("#job-command").val(job.command.replace("\"","\\\""));
+		$("#job-command").val(job.command);
 		// if macro not used
 		if(job.schedule.indexOf("@") != 0){
 			var components = job.schedule.split(" ");

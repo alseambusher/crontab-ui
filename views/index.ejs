@@ -11,8 +11,7 @@
 	$(function () {
 		// initialize tooltips
 		$('[data-toggle="tooltip"]').tooltip();
-		// TODO handle the commands with quotes
-		crontabs = JSON.parse('<%- crontabs %>');
+		crontabs = JSON.parse('<%- crontabs.replace(/\\\"/g,"\\\\\"") %>');
 		routes = JSON.parse('<%- routes %>');
 	})
 </script>

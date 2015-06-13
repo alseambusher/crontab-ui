@@ -45,7 +45,7 @@
 	<label>Command</label>
 	<input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();"/><br />
 	<label>Quick Schedule</label><br />
-	<a class="btn btn-primary" onclick="schedule = '@startup'; job_string();">Startup</a>
+	<a class="btn btn-primary" onclick="schedule = '@reboot'; job_string();">Startup</a>
 	<a class="btn btn-primary" onclick="schedule = '@hourly'; job_string();">Hourly</a>
 	<a class="btn btn-primary" onclick="schedule = '@daily'; job_string();">Daily</a>
 	<a class="btn btn-primary" onclick="schedule = '@monthly'; job_string();">Monthly</a>
