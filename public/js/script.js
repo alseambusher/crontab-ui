@@ -10,8 +10,8 @@ function messageBox(body, title, ok_text, close_text, callback){
 	$("#modal-body").html(body);
 	$("#modal-title").html(title);
 	if (ok_text) $("#modal-button").html(ok_text);
-	$("#modal-button").show();
 	if(close_text) $("#modal-close-button").html(close_text);
+	$("#modal-button").unbind("click"); // remove existing events attached to this
 	$("#modal-button").click(callback);
 	$("#popup").modal("show");
 }
@@ -128,6 +128,12 @@ function restore_backup(db_name){
 		$.get(routes.restore_backup, {db: db_name}, function(){
 			location = routes.root;
 		});
+	});
+}
+
+function import_db(){
+	messageBox("<p> Do you want to import crontab?<br /> <b style='color:red'>NOTE: It is recommended to take a backup before this.</b> </p>", "Confirm import from crontab", null, null, function(){
+		$('#import_file').click();
 	});
 }
 

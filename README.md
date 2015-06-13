@@ -6,17 +6,22 @@ Editing the plain text crontab is error prone for managing jobs, e.g., adding jo
 ![flow](http://alseambusher.github.io/files/flow.gif)
 
 1. Easy setup
-2. Easy and safe adding, deleting or pausing jobs. Easy to maintain hundreds of jobs.
-3. Backups
-4. Download and schedule scripts which are online
-5. Manage crontabs on multiple machines easily. No SSH, No copy-pasting.
+2. Safe adding, deleting or pausing jobs. Easy to maintain hundreds of jobs.
+3. Backup your crontabs.
+4. Export crontab and deploy on other machines without much hassle.
 
-TODO
-====
-1. Run jobs as different user
-2. Online backup
-3. Profiling jobs 
-4. Logs
+Read [this](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html) to see more details.
 
+##Setup
+
+    npm install crontab-ui
+    crontab-ui
+
+###TODO
+
+1. Run jobs as different user in one place.
+2. Profiling jobs.
+3. Logs.
+4. Importing from existing crontab file.
 
 

@@ -5,19 +5,23 @@ db.loadDatabase(function (err) {
 });
 var exec = require('child_process').exec;
 var fs = require('fs');
+var cron_parser = require("cron-parser")
 
 crontab = function(name, command, schedule, stopped){
 	var data = {};
 	data.name = name;
 	data.command = command;
 	data.schedule = schedule;
-	if(stopped != null) data.stopped = stopped;
+	if(stopped != null) {
+		data.stopped = stopped;
+	} 
 	data.timestamp = (new Date()).toString();
 	return data;
 }
 
 exports.create_new = function(name, command, schedule){
 	var tab = crontab(name, command, schedule, false);
+	tab.created = new Date().valueOf();
 	db.insert(tab);
 }
 
@@ -33,7 +37,13 @@ exports.remove = function(_id){
 	db.remove({_id: _id}, {});
 }
 exports.crontabs = function(callback){
-	db.find({}, function(err, docs){
+	db.find({}).sort({ created: -1 }).exec(function(err, docs){
+		for(var i=0; i<docs.length; i++){
+			if(docs[i].schedule == "@reboot")
+				docs[i].next = "Next Reboot"
+			else
+				docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+		}
 		callback(docs);
 	});
 }
@@ -61,6 +71,21 @@ exports.get_backup_names = function(){
 		}
 	});
 
+	// Sort by date. Newest on top
+	for(var i=0; i<backups.length; i++){
+		var Ti = backups[i].split("backup")[1]
+		Ti = new Date(Ti.substring(0, Ti.length-3)).valueOf();
+		for(var j=0; j<i; j++){
+			var Tj = backups[j].split("backup")[1]
+			Tj = new Date(Tj.substring(0, Tj.length-3)).valueOf();
+			if(Ti > Tj){
+				var temp = backups[i];
+				backups[i] = backups[j];
+				backups[j] = temp;
+			}
+		}
+	}
+
 	return backups;
 }
 
@@ -74,6 +99,24 @@ exports.restore = function(db_name){
 	db.loadDatabase(); // reload the database
 }
 
-exports.import = function(){
-	//TODO
+exports.reload_db= function(){
+	db.loadDatabase();
+}
+
+// TODO
+exports.import_crontab = function(){
+	exec("crontab -l", function(error, stdout, stderr){
+		var lines = stdout.split("\n");
+		lines.forEach(function(line){
+			/*
+				trim the spaces at edges
+				split the line based of space and tab
+				remove empty splits
+				If the first character is @
+
+			*/
+			//if(line.indexOf("@")
+		})
+		console.log(stdout);	
+	});
 }
