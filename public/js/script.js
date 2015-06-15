@@ -78,6 +78,7 @@ function editJob(_id){
 		job_string();
 	}
 
+	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id}, function(){
@@ -99,6 +100,7 @@ function newJob(){
 	$("#job-name").val("");
 	$("#job-command").val("");
 	job_string();
+	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1}, function(){
