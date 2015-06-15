@@ -26,6 +26,7 @@ app.use(busboy()) // to support file uploads
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/public/css'));
 app.use(express.static(__dirname + '/public/js'));
+app.set('views', __dirname + '/views');
 
 //set port
 app.set('port', (process.env.PORT || 8000));
