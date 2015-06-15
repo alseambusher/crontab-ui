@@ -14,10 +14,8 @@ Read [this](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-wa
 
 ##Setup
 
-    git clone https://github.com/alseambusher/crontab-ui
-    cd crontab-ui
-    npm install
-    node app.js
+    npm install crontab-ui
+    crontab-ui
 
 ###TODO
 

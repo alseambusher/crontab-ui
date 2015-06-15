@@ -4,7 +4,7 @@
   "description": "Easy and safe way to manage your crontab file",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "latest",
@@ -17,6 +17,9 @@
   },
   "engines": {
     "node": "latest"
+  },
+   "bin": {
+     "crontab-ui": "bin/crontab-ui.js"
   },
   "repository": {
     "type": "git",
