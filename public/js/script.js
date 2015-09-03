@@ -54,7 +54,6 @@ function setCrontab(){
 }
 
 function editJob(_id){
-	console.log(_id);
 	var job = null;
 	crontabs.forEach(function(crontab){
 		if(crontab._id == _id)
