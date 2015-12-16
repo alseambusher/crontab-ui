@@ -133,8 +133,12 @@ app.get(routes.import_crontab, function(req, res) {
 })
 
 app.get(routes.logger, function(req, res) {
-	console.log(crontab.log_folder)
-	res.sendFile(crontab.log_folder +"/"+req.query.id+".log");
+	var fs = require("fs");
+	_file = crontab.log_folder +"/"+req.query.id+".log";
+	if (fs.existsSync(_file))
+		res.sendFile(_file);
+	else
+		res.end("No errors logged yet");
 })
 
 app.listen(app.get('port'), function() {
