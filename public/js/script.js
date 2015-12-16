@@ -74,13 +74,16 @@ function editJob(_id){
 		}
 		schedule = job.schedule;
 		job_command = job.command;
+		console.log(job.logging)
+		if (job.logging && job.logging != "false")
+			$("#job-logging").prop("checked", true);
 		job_string();
 	}
 
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id}, function(){
+		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
 		})
 	});
@@ -102,7 +105,7 @@ function newJob(){
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1}, function(){
+		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
 		})
 	});

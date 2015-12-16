@@ -37,7 +37,7 @@ app.get(routes.root, function(req, res) {
 		res.render('index', {
 			routes : JSON.stringify(routes),
 			crontabs : JSON.stringify(docs),
-			backups : crontab.get_backup_names()
+			backups : crontab.get_backup_names(),
 		});
 	});
 })
@@ -45,7 +45,7 @@ app.get(routes.root, function(req, res) {
 app.post(routes.save, function(req, res) {
 	// new job
 	if(req.body._id == -1){
-		crontab.create_new(req.body.name, req.body.command, req.body.schedule);
+		crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging);
 	}
 	// edit job
 	else{
@@ -130,6 +130,11 @@ app.post(routes.import, function(req, res) {
 app.get(routes.import_crontab, function(req, res) {
 	crontab.import_crontab()
 	res.end();
+})
+
+app.get(routes.logger, function(req, res) {
+	console.log(crontab.log_folder)
+	res.sendFile(crontab.log_folder +"/"+req.query.id+".log");
 })
 
 app.listen(app.get('port'), function() {
