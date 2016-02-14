@@ -46,7 +46,7 @@ function startJob(_id){
 
 function setCrontab(){
 	messageBox("<p> Do you want to set the crontab file? </p>", "Confirm crontab setup", null, null, function(){
-		$.get(routes.crontab, {}, function(){
+		$.get(routes.crontab, { "env_vars": $("#env_vars").val() }, function(){
 			// TODO show only if success
 			infoMessageBox("Successfuly set crontab file!","Information");
 		});
@@ -155,4 +155,3 @@ function set_schedule(){
 	job_string();
 }
 // popup management ends
-

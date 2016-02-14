@@ -16,7 +16,7 @@ crontab = function(name, command, schedule, stopped, logging){
 	data.schedule = schedule;
 	if(stopped != null) {
 		data.stopped = stopped;
-	} 
+	}
 	data.timestamp = (new Date()).toString();
 	data.logging = logging;
 	return data;
@@ -50,15 +50,18 @@ exports.crontabs = function(callback){
 		callback(docs);
 	});
 }
-exports.set_crontab = function(){
+exports.set_crontab = function(env_vars){
 	exports.crontabs( function(tabs){
 		var crontab_string = "";
+		if (env_vars) {
+			crontab_string = env_vars + "\n";
+		}
 		tabs.forEach(function(tab){
 			if(!tab.stopped){
 				if (tab.logging && tab.logging == "true"){
 					tmp_log = "/tmp/" + tab._id + ".log";
 					log_file = exports.log_folder + "/" + tab._id + ".log";
-					if(tab.command[tab.command.length-1] != ";") // add semicolon 
+					if(tab.command[tab.command.length-1] != ";") // add semicolon
 						tab.command +=";"
 					//{ command; } 2>/tmp/<id>.log|| {if test -f /tmp/<id>; then date >> <log file>; cat /tmp/<id>.log >> <log file>; rm /tmp<id>.log }
 					crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi \n";
@@ -69,7 +72,7 @@ exports.set_crontab = function(){
 		});
 		fs.writeFile("/tmp/crontab", crontab_string, function(err) {
 			exec("crontab /tmp/crontab");
-		}); 
+		});
 
 	});
 }
@@ -129,6 +132,6 @@ exports.import_crontab = function(){
 			*/
 			//if(line.indexOf("@")
 		})
-		console.log(stdout);	
+		console.log(stdout);
 	});
 }

@@ -19,7 +19,7 @@ var bodyParser = require('body-parser')
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
-})); 
+}));
 app.use(busboy()) // to support file uploads
 
 // include all folders
@@ -69,7 +69,7 @@ app.post(routes.remove, function(req, res) {
 	res.end();
 })
 app.get(routes.crontab, function(req, res) {
-	crontab.set_crontab();
+	crontab.set_crontab(req.query.env_vars);
 	res.end();
 })
 
