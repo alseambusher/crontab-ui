@@ -6,8 +6,10 @@ db.loadDatabase(function (err) {
 var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser")
+var os = require("os")
 
 exports.log_folder = __dirname + '/crontabs/logs';
+exports.env_file = __dirname + '/crontabs/env.db';
 
 crontab = function(name, command, schedule, stopped, logging){
 	var data = {};
@@ -70,6 +72,8 @@ exports.set_crontab = function(env_vars){
 					crontab_string += tab.schedule + " " + tab.command + "\n";
 			}
 		});
+
+		fs.writeFile(exports.env_file, env_vars);
 		fs.writeFile("/tmp/crontab", crontab_string, function(err) {
 			exec("crontab /tmp/crontab");
 		});
@@ -116,6 +120,13 @@ exports.restore = function(db_name){
 
 exports.reload_db= function(){
 	db.loadDatabase();
+}
+
+exports.get_env = function(){
+	if (fs.existsSync(exports.env_file)) {
+		return fs.readFileSync(exports.env_file , 'utf8').replace("\n", "\n");
+	}
+	return ""
 }
 
 // TODO

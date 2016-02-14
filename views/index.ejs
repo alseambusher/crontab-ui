@@ -13,6 +13,7 @@
 		$('[data-toggle="tooltip"]').tooltip();
 		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"") %>');
 		routes = JSON.parse('<%- routes %>');
+		$("#env_vars").val(`<%- env  %>`);
 	})
 </script>
 </head>

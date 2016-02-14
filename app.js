@@ -38,6 +38,7 @@ app.get(routes.root, function(req, res) {
 			routes : JSON.stringify(routes),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
+			env : crontab.get_env()
 		});
 	});
 })
