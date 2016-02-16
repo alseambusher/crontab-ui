@@ -46,3 +46,7 @@ But make sure to take a backup before importing.
 ###Contribute
 Fork Crontab UI and contribute to it. Pull requests are encouraged.
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/alseambusher/crontab-ui/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
