@@ -7,19 +7,21 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "latest",
-    "ejs": "latest",
-    "nedb": "latest",
     "body-parser": "latest",
-    "mime": "latest",
+    "connect-busboy": "latest",
     "cron-parser": "latest",
-    "connect-busboy": "latest"
+    "ejs": "latest",
+    "express": "latest",
+    "mime": "latest",
+    "moment": "^2.13.0",
+    "nedb": "latest",
+    "underscore": "^1.8.3"
   },
   "engines": {
     "node": "latest"
   },
-   "bin": {
-     "crontab-ui": "bin/crontab-ui.js"
+  "bin": {
+    "crontab-ui": "bin/crontab-ui.js"
   },
   "repository": {
     "type": "git",

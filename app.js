@@ -3,6 +3,7 @@ var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
 
+var moment = require('moment');
 var path = require('path');
 var mime = require('mime');
 var fs = require('fs');
@@ -34,11 +35,19 @@ app.set('port', (process.env.PORT || 8000));
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
 	crontab.crontabs( function(docs){
-		res.render('index', {
-			routes : JSON.stringify(routes),
-			crontabs : JSON.stringify(docs),
-			backups : crontab.get_backup_names(),
-			env : crontab.get_env()
+		crontab.templates(function(templates) {
+			res.render('index', {
+				routes : JSON.stringify(routes),
+				crontabs : JSON.stringify(docs),
+				templates: templates,
+				templatesById: templates.reduce(function(memo, t) {
+					memo[t._id] = t;
+					return memo;
+				}, {}),
+				backups : crontab.get_backup_names(),
+				env : crontab.get_env(),
+				moment: moment,
+			});
 		});
 	});
 })
@@ -46,12 +55,30 @@ app.get(routes.root, function(req, res) {
 app.post(routes.save, function(req, res) {
 	// new job
 	if(req.body._id == -1){
-		crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging);
+		crontab.create_new(req.body.name, req.body.command, req.body.command_template, req.body.vars, req.body.schedule, req.body.logging);
 	}
 	// edit job
 	else{
+
 		crontab.update(req.body);
 	}
+	res.end();
+})
+
+app.post(routes.save_template, function(req, res) {
+	// new job
+	if(req.body._id == -1){
+		crontab.create_new_template(req.body.name, req.body.command, req.body.schedule);
+	}
+	// edit job
+	else{
+		crontab.update_template(req.body);
+	}
+	res.end();
+});
+
+app.post(routes.remove_template, function(req, res) {
+	crontab.remove_template(req.body._id);
 	res.end();
 })
 
@@ -141,6 +168,8 @@ app.get(routes.logger, function(req, res) {
 	else
 		res.end("No errors logged yet");
 })
+
+// app.use('/scripts/moment.js', express.static(__dirname + '/node_modules/moment/min/moment.min.js'));
 
 app.listen(app.get('port'), function() {
   	console.log("Crontab UI is running at localhost:" + app.get('port'))
