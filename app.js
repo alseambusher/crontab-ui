@@ -108,11 +108,18 @@ app.get(routes.backup, function(req, res) {
 
 app.get(routes.restore, function(req, res) {
 	// get all the crontabs
-	restore.crontabs(req.query.db, function(docs){
+	restore.loadBackupFile(req.query.db, function(docs, templates) {
 		res.render('restore', {
 			routes : JSON.stringify(routes),
 			crontabs : JSON.stringify(docs),
+			templates: templates,
+			templatesById: templates.reduce(function(memo, t) {
+				memo[t._id] = t;
+				return memo;
+			}, {}),
 			backups : crontab.get_backup_names(),
+			env : crontab.get_env(),
+			moment: moment,
 			db: req.query.db
 		});
 	});
@@ -129,31 +136,30 @@ app.get(routes.restore_backup, function(req, res) {
 })
 
 app.get(routes.export, function(req, res) {
-	var file = __dirname + '/crontabs/crontab.db';
+	var backupData = crontab.backup_data();
 
-	var filename = path.basename(file);
-	var mimetype = mime.lookup(file);
+	res.setHeader('Content-disposition', 'attachment; filename=crontab_ui_backup.json');
+	res.setHeader('Content-type', 'application/json');
 
-	res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-	res.setHeader('Content-type', mimetype);
-
-	var filestream = fs.createReadStream(file);
-	filestream.pipe(res);
-})
+	res.end(JSON.stringify(backupData));
+});
 
 
 app.post(routes.import, function(req, res) {
 	var fstream;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
-		fstream = fs.createWriteStream(__dirname + '/crontabs/crontab.db');
-		file.pipe(fstream);
-		fstream.on('close', function () {
+
+		file.on('data', function(data) {
+			crontab.restore_data(JSON.parse(data.toString('utf8')));
 			crontab.reload_db();
-			res.redirect(routes.root);
-        	});
-    	});
-})
+		});
+	});
+
+	req.busboy.on('finish', function() {
+		res.redirect(routes.root);
+	})
+});
 
 app.get(routes.import_crontab, function(req, res) {
 	crontab.import_crontab()

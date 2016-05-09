@@ -1,8 +1,12 @@
 //load database
+
+exports.crontab_db_file = __dirname + '/crontabs/crontab.db';
+exports.templates_db_file = __dirname + '/crontabs/templates.db';
+
 var Datastore = require('nedb');
 var db = {
- crontabs: new Datastore({ filename: __dirname + '/crontabs/crontab.db', autoload: true }),
- templates: new Datastore({ filename: __dirname + '/crontabs/templates.db', autoload: true }),
+	 crontabs: new Datastore({ filename: exports.crontab_db_file, autoload: true }),
+ templates: new Datastore({ filename: exports.templates_db_file, autoload: true }),
 };
 var exec = require('child_process').exec;
 var fs = require('fs');
@@ -166,18 +170,39 @@ exports.get_backup_names = function(){
 	return backups;
 }
 
-exports.backup = function(){
+exports.backup_data = function() {
 	//TODO check if it failed
-	fs.createReadStream( __dirname + '/crontabs/crontab.db').pipe(fs.createWriteStream( __dirname + '/crontabs/backup ' + (new Date()).toString().replace("+", " ") + '.db'));
+	var crontabData = fs.readFileSync( exports.crontab_db_file ).toString('utf8')
+	var templateData = fs.readFileSync( exports.templates_db_file ).toString('utf8')
+
+	return {
+		version: 1,
+		crontabs: crontabData,
+		templates: templateData,
+	};
+}
+
+exports.backup = function(){
+	var backupFile = __dirname + '/crontabs/backup ' + (new Date()).toString().replace("+", " ") + '.db';
+
+	fs.writeFileSync(backupFile, JSON.stringify(exports.backup_data()));
 }
 
 exports.restore = function(db_name){
-	fs.createReadStream( __dirname + '/crontabs/' + db_name).pipe(fs.createWriteStream( __dirname + '/crontabs/crontab.db'));
+	exports.restore_data(JSON.parse(fs.readFileSync( __dirname + '/crontabs/' + db_name )))
+}
+
+exports.restore_data = function(backupData) {
+	fs.writeFileSync(exports.crontab_db_file, backupData.crontabs);
+	fs.writeFileSync(exports.templates_db_file, backupData.templates);
+
 	db.crontabs.loadDatabase(); // reload the database
+	db.templates.loadDatabase();
 }
 
 exports.reload_db = function(){
 	db.crontabs.loadDatabase();
+	db.templates.loadDatabase();
 }
 
 exports.get_env = function(){

@@ -15,6 +15,7 @@
     "mime": "latest",
     "moment": "^2.13.0",
     "nedb": "latest",
+    "tmp": "0.0.28",
     "underscore": "^1.8.3"
   },
   "engines": {
