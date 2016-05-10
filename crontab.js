@@ -60,7 +60,7 @@ exports.remove = function(_id){
 }
 exports.crontabs = function(callback) {
 	exports.templates(function(templates) {
-		db.crontabs.find({}).sort({ created: -1 }).exec(function(err, docs){
+		db.crontabs.find({}).sort({ name: 1 }).exec(function(err, docs){
 			for(var i=0; i<docs.length; i++){
 				var doc = docs[i];
 

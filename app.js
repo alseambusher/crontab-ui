@@ -31,6 +31,7 @@ app.set('views', __dirname + '/views');
 
 //set port
 app.set('port', (process.env.PORT || 8000));
+app.set('listen', (process.env.LISTEN || '0.0.0.0'));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
@@ -177,6 +178,6 @@ app.get(routes.logger, function(req, res) {
 
 // app.use('/scripts/moment.js', express.static(__dirname + '/node_modules/moment/min/moment.min.js'));
 
-app.listen(app.get('port'), function() {
-  	console.log("Crontab UI is running at localhost:" + app.get('port'))
+app.listen(app.get('port'), app.get('listen'), function() {
+  	console.log("Crontab UI is running at " + app.get('listen') + ":" + app.get('port'))
 })
