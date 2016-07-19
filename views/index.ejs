@@ -44,6 +44,7 @@
 	<table class="table table-striped" id="main_table">
 	<thead>
 		<tr>
+			<th>#</th>
 			<th>Name</th>
 			<th>Job</th>
 			<th>Time</th>
@@ -63,6 +64,10 @@
 				<td>
 					<%= index %>.
 					<% index += 1 %>
+				</td>
+
+				<td>
+
 
 					<% if (crontab.name) { %>
 						<%= crontab.name %>
@@ -111,7 +116,17 @@
 <% include popup.ejs %>
 <script>
   jQuery(function($) {
-  	$('#main_table').DataTable();
+  	$('#main_table').DataTable({
+  		order: [1, 'asc'],
+  		columns: [
+  			{orderable: false},
+  			null,
+  			null,
+  			null,
+  			{orderable: false},
+  			{orderable: false}
+  		]
+  	});
   });
 </script>
 </body>
