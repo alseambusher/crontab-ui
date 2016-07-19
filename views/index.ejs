@@ -3,8 +3,11 @@
 <title>Crontab UI</title>
 <script src="jquery.js"></script>
 <script src="script.js"></script>
-<script src="bootstrap.min.js"></script>
+<script src="bootstrap.min.js"></script> 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.js"></script>
+
 <link rel="stylesheet" href="bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"/>
 <script type="text/javascript">
 	var crontabs = [];
 	var routes = [];
@@ -38,14 +41,17 @@
 	<br/>
 	<br/>
 
-	<table class="table">
-	<tr>
-		<th>Name</th>
-		<th>Job</th>
-		<th>Time</th>
-		<th>Last Modified</th>
-		<th></th>
-	</tr>
+	<table class="table table-striped" id="main_table">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Job</th>
+			<th>Time</th>
+			<th>Last Modified</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
 	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
 		<!-- color based on crontab state -->
@@ -98,10 +104,15 @@
 			</tr>
 	<% }); %>
 
-
+	</tbody>
 
 	</table>
 </div>
 <% include popup.ejs %>
+<script>
+  jQuery(function($) {
+  	$('#main_table').DataTable();
+  });
+</script>
 </body>
 </html>
