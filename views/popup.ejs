@@ -42,34 +42,55 @@
       <div class="modal-body" id="job-body">
 	<label>Name (Optional)</label>
 	<input type='text' class='form-control' id='job-name'/><br />
-	<label>Command</label>
-	<input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();"/><br />
-	<label>Quick Schedule</label><br />
-	<a class="btn btn-primary" onclick="schedule = '@reboot'; job_string();">Startup</a>
-	<a class="btn btn-primary" onclick="schedule = '@hourly'; job_string();">Hourly</a>
-	<a class="btn btn-primary" onclick="schedule = '@daily'; job_string();">Daily</a>
-  <a class="btn btn-primary" onclick="schedule = '@weekly'; job_string();">Weekly</a>
-	<a class="btn btn-primary" onclick="schedule = '@monthly'; job_string();">Monthly</a>
-	<a class="btn btn-primary" onclick="schedule = '@yearly'; job_string();">Yearly</a><br /><br />
+	<label>Command Template</label>
+  <select id="job-command-template" class="form-control" onchange="setTemplateVariables(this.value)">
+    <option value="">No Template</option>
+    <% templates.forEach(function(template) { %>
+      <option value="<%= template._id %>"><%= template.name %></option>
+    <% }) %>
+  </select><br />
 
-	<div class="row">
-		<div class="col-md-2">Minute</div>
-		<div class="col-md-2">Hour</div>
-		<div class="col-md-2">Day</div>
-		<div class="col-md-2">Month</div>
-		<div class="col-md-2">Week</div>
-	</div>
-	<div class="row">
-		<div class="col-md-2"><input type="text" class="form-control" id="job-minute" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-hour" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-day" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-month" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><input type="text" class="form-control" id="job-week" value="*" onclick="this.select();"/></div>
-		<div class="col-md-2"><a class="btn btn-primary" onclick="set_schedule();">Set</a></div>
-	</div>
+  <div id="job-command-wrapper">
+    <label>Command</label>
+  	<input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();"/><br />
 
-	<br />
-	<br />
+    <label>Quick Schedule</label><br />
+    <a class="btn btn-primary" onclick="schedule = '@reboot'; job_string();">Startup</a>
+    <a class="btn btn-primary" onclick="schedule = '@hourly'; job_string();">Hourly</a>
+    <a class="btn btn-primary" onclick="schedule = '@daily'; job_string();">Daily</a>
+    <a class="btn btn-primary" onclick="schedule = '@weekly'; job_string();">Weekly</a>
+    <a class="btn btn-primary" onclick="schedule = '@monthly'; job_string();">Monthly</a>
+    <a class="btn btn-primary" onclick="schedule = '@yearly'; job_string();">Yearly</a><br /><br />
+
+    <div class="row">
+      <div class="col-md-2">Minute</div>
+      <div class="col-md-2">Hour</div>
+      <div class="col-md-2">Day</div>
+      <div class="col-md-2">Month</div>
+      <div class="col-md-2">Week</div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"><input type="text" class="form-control" id="job-minute" value="*" onclick="this.select();"/></div>
+      <div class="col-md-2"><input type="text" class="form-control" id="job-hour" value="*" onclick="this.select();"/></div>
+      <div class="col-md-2"><input type="text" class="form-control" id="job-day" value="*" onclick="this.select();"/></div>
+      <div class="col-md-2"><input type="text" class="form-control" id="job-month" value="*" onclick="this.select();"/></div>
+      <div class="col-md-2"><input type="text" class="form-control" id="job-week" value="*" onclick="this.select();"/></div>
+      <div class="col-md-2"><a class="btn btn-primary" onclick="set_schedule();">Set</a></div>
+    </div>
+
+    <br />
+    <br />
+  </div>
+  <div id="job-command-variables-wrapper" style="display: none">
+    <label>Command Variables</label>
+
+    <div id="job-variables-list">
+
+    </div>
+  </div>
+
+
+
 	<label>Job</label>
 	<input type='text' class='form-control' id='job-string' disabled='disabled'/><br />
 	<label><input type="checkbox" id="job-logging" style="position:relative;top:2px"/> Enable error logging.</label>
@@ -77,6 +98,58 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
         <button type="button" class="btn btn-primary" data-dismiss="modal" id="job-save">Save</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Template -->
+<div class="modal fade" id="template-popup">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="template-title">Template</h4>
+      </div>
+      <div class="modal-body" id="template-body">
+  <label>Name</label>
+  <input type='text' class='form-control' id='template-name'/><br />
+  <label>Command</label>
+  <input type='text' class='form-control' id='template-command' onkeyup="template_command = $(this).val(); template_string();"/><br />
+  <label>Quick Schedule</label><br />
+  <a class="btn btn-primary" onclick="schedule = '@reboot'; template_string();">Startup</a>
+  <a class="btn btn-primary" onclick="schedule = '@hourly'; template_string();">Hourly</a>
+  <a class="btn btn-primary" onclick="schedule = '@daily'; template_string();">Daily</a>
+  <a class="btn btn-primary" onclick="schedule = '@weekly'; template_string();">Weekly</a>
+  <a class="btn btn-primary" onclick="schedule = '@monthly'; template_string();">Monthly</a>
+  <a class="btn btn-primary" onclick="schedule = '@yearly'; template_string();">Yearly</a><br /><br />
+
+  <div class="row">
+    <div class="col-md-2">Minute</div>
+    <div class="col-md-2">Hour</div>
+    <div class="col-md-2">Day</div>
+    <div class="col-md-2">Month</div>
+    <div class="col-md-2">Week</div>
+  </div>
+  <div class="row">
+    <div class="col-md-2"><input type="text" class="form-control" id="template-minute" value="*" onclick="this.select();"/></div>
+    <div class="col-md-2"><input type="text" class="form-control" id="template-hour" value="*" onclick="this.select();"/></div>
+    <div class="col-md-2"><input type="text" class="form-control" id="template-day" value="*" onclick="this.select();"/></div>
+    <div class="col-md-2"><input type="text" class="form-control" id="template-month" value="*" onclick="this.select();"/></div>
+    <div class="col-md-2"><input type="text" class="form-control" id="template-week" value="*" onclick="this.select();"/></div>
+    <div class="col-md-2"><a class="btn btn-primary" onclick="set_template_schedule();">Set</a></div>
+  </div>
+
+  <br />
+  <br />
+  <label>Job</label>
+  <input type='text' class='form-control' id='template-string' disabled='disabled'/><br />
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal" id="template-remove">Delete Template</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" id="template-save">Save</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

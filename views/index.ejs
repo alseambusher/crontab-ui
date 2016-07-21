@@ -3,8 +3,11 @@
 <title>Crontab UI</title>
 <script src="jquery.js"></script>
 <script src="script.js"></script>
-<script src="bootstrap.min.js"></script>
+<script src="bootstrap.min.js"></script> 
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.js"></script>
+
 <link rel="stylesheet" href="bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"/>
 <script type="text/javascript">
 	var crontabs = [];
 	var routes = [];
@@ -12,6 +15,7 @@
 		// initialize tooltips
 		$('[data-toggle="tooltip"]').tooltip();
 		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"") %>');
+		templates = <%- JSON.stringify(templates) %>;
 		routes = JSON.parse('<%- routes %>');
 		$("#env_vars").val(`<%- env  %>`);
 	})
@@ -37,15 +41,18 @@
 	<br/>
 	<br/>
 
-	<table class="table">
-	<tr>
-		<th>Id</th>
-		<th></th>
-		<th>Job</th>
-		<th>Time</th>
-		<th>Last Modified</th>
-		<th></th>
-	</tr>
+	<table class="table table-striped" id="main_table">
+	<thead>
+		<tr>
+			<th>#</th>
+			<th>Name</th>
+			<th>Job</th>
+			<th>Time</th>
+			<th>Last Modified</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
 	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
 		<!-- color based on crontab state -->
@@ -57,17 +64,33 @@
 				<td>
 					<%= index %>.
 					<% index += 1 %>
-					<%= crontab._id %>
 				</td>
 
 				<td>
+
+
 					<% if (crontab.name) { %>
-					<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.name %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+						<%= crontab.name %>
+						<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab._id %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+					<% } else { %>
+						<%= crontab._id %>
 					<% } %>
+
+
 				</td>
-				<td><%= crontab.command %></td>
+				<td>
+					<% if(crontab.command_template && templatesById[crontab.command_template]) { %>
+						<%= templatesById[crontab.command_template].name %>
+
+						<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.command %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+					<% } else { %>
+						<%= crontab.command %>
+					<% } %>
+
+
+				</td>
 				<td><span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab.next %>"><%= crontab.schedule %></span></td>
-				<td style="width:20%"><%= crontab.timestamp %></td>
+				<td style="width:20%" title="<%= crontab.timestamp %>"><%= moment(new Date(crontab.timestamp)).fromNow() %></td>
 				<td>
 
 		<!-- controls based on crontab state -->
@@ -86,10 +109,25 @@
 			</tr>
 	<% }); %>
 
-
+	</tbody>
 
 	</table>
 </div>
 <% include popup.ejs %>
+<script>
+  jQuery(function($) {
+  	$('#main_table').DataTable({
+  		order: [1, 'asc'],
+  		columns: [
+  			{orderable: false},
+  			null,
+  			null,
+  			null,
+  			{orderable: false},
+  			{orderable: false}
+  		]
+  	});
+  });
+</script>
 </body>
 </html>

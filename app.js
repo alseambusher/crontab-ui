@@ -3,6 +3,7 @@ var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
 
+var moment = require('moment');
 var path = require('path');
 var mime = require('mime');
 var fs = require('fs');
@@ -30,15 +31,24 @@ app.set('views', __dirname + '/views');
 
 //set port
 app.set('port', (process.env.PORT || 8000));
+app.set('listen', (process.env.LISTEN || '0.0.0.0'));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
 	crontab.crontabs( function(docs){
-		res.render('index', {
-			routes : JSON.stringify(routes),
-			crontabs : JSON.stringify(docs),
-			backups : crontab.get_backup_names(),
-			env : crontab.get_env()
+		crontab.templates(function(templates) {
+			res.render('index', {
+				routes : JSON.stringify(routes),
+				crontabs : JSON.stringify(docs),
+				templates: templates,
+				templatesById: templates.reduce(function(memo, t) {
+					memo[t._id] = t;
+					return memo;
+				}, {}),
+				backups : crontab.get_backup_names(),
+				env : crontab.get_env(),
+				moment: moment,
+			});
 		});
 	});
 })
@@ -46,12 +56,30 @@ app.get(routes.root, function(req, res) {
 app.post(routes.save, function(req, res) {
 	// new job
 	if(req.body._id == -1){
-		crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging);
+		crontab.create_new(req.body.name, req.body.command, req.body.command_template, req.body.vars, req.body.schedule, req.body.logging);
 	}
 	// edit job
 	else{
+
 		crontab.update(req.body);
 	}
+	res.end();
+})
+
+app.post(routes.save_template, function(req, res) {
+	// new job
+	if(req.body._id == -1){
+		crontab.create_new_template(req.body.name, req.body.command, req.body.schedule);
+	}
+	// edit job
+	else{
+		crontab.update_template(req.body);
+	}
+	res.end();
+});
+
+app.post(routes.remove_template, function(req, res) {
+	crontab.remove_template(req.body._id);
 	res.end();
 })
 
@@ -81,11 +109,18 @@ app.get(routes.backup, function(req, res) {
 
 app.get(routes.restore, function(req, res) {
 	// get all the crontabs
-	restore.crontabs(req.query.db, function(docs){
+	restore.loadBackupFile(req.query.db, function(docs, templates) {
 		res.render('restore', {
 			routes : JSON.stringify(routes),
 			crontabs : JSON.stringify(docs),
+			templates: templates,
+			templatesById: templates.reduce(function(memo, t) {
+				memo[t._id] = t;
+				return memo;
+			}, {}),
 			backups : crontab.get_backup_names(),
+			env : crontab.get_env(),
+			moment: moment,
 			db: req.query.db
 		});
 	});
@@ -102,31 +137,30 @@ app.get(routes.restore_backup, function(req, res) {
 })
 
 app.get(routes.export, function(req, res) {
-	var file = __dirname + '/crontabs/crontab.db';
+	var backupData = crontab.backup_data();
 
-	var filename = path.basename(file);
-	var mimetype = mime.lookup(file);
+	res.setHeader('Content-disposition', 'attachment; filename=crontab_ui_backup.json');
+	res.setHeader('Content-type', 'application/json');
 
-	res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-	res.setHeader('Content-type', mimetype);
-
-	var filestream = fs.createReadStream(file);
-	filestream.pipe(res);
-})
+	res.end(JSON.stringify(backupData));
+});
 
 
 app.post(routes.import, function(req, res) {
 	var fstream;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
-		fstream = fs.createWriteStream(__dirname + '/crontabs/crontab.db');
-		file.pipe(fstream);
-		fstream.on('close', function () {
+
+		file.on('data', function(data) {
+			crontab.restore_data(JSON.parse(data.toString('utf8')));
 			crontab.reload_db();
-			res.redirect(routes.root);
-        	});
-    	});
-})
+		});
+	});
+
+	req.busboy.on('finish', function() {
+		res.redirect(routes.root);
+	})
+});
 
 app.get(routes.import_crontab, function(req, res) {
 	crontab.import_crontab()
@@ -142,6 +176,8 @@ app.get(routes.logger, function(req, res) {
 		res.end("No errors logged yet");
 })
 
-app.listen(app.get('port'), function() {
-  	console.log("Crontab UI is running at localhost:" + app.get('port'))
+// app.use('/scripts/moment.js', express.static(__dirname + '/node_modules/moment/min/moment.min.js'));
+
+app.listen(app.get('port'), app.get('listen'), function() {
+  	console.log("Crontab UI is running at " + app.get('listen') + ":" + app.get('port'))
 })

@@ -15,15 +15,29 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Templates <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <% if (templates.length > 0){ %>
+
+              <% templates.forEach(function(template){ %>
+                      <li><a onclick="editTemplate('<%= template._id %>')"><%= template.name %></a></li>
+              <% }) %>
+              <li class="divider"></li>
+
+            <% } %>
+            <li><a onclick="newTemplate();"><i class="fa fa-plus"></i> Add Template</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Backups <span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">
-	    <% if (backups.length == 0){ %>
-            	<li><a href="#">None</a></li>
-	    <% } else { %>
-	    	<% backups.forEach(function(file){ %>
-            		<li><a href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= file %></a></li>
-	    	<% }) %>
-	    <% } %>
+      	    <% if (backups.length == 0){ %>
+                  	<li><a href="#">None</a></li>
+      	    <% } else { %>
+      	    	<% backups.forEach(function(file){ %>
+                  		<li><a href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= file %></a></li>
+      	    	<% }) %>
+      	    <% } %>
           </ul>
         </li>
       </ul>
