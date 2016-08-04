@@ -133,16 +133,35 @@ exports.get_env = function(){
 exports.import_crontab = function(){
 	exec("crontab -l", function(error, stdout, stderr){
 		var lines = stdout.split("\n");
-		lines.forEach(function(line){
-			/*
-				trim the spaces at edges
-				split the line based of space and tab
-				remove empty splits
-				If the first character is @
 
-			*/
-			//if(line.indexOf("@")
+		var namePrefix = new Date().getTime();
+
+		lines.forEach(function(line, index){
+			var regex = /^((\@[a-zA-Z]+\s)|(([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s))/;
+			var command = line.replace(regex, '').trim();
+			var schedule = line.replace(command, '').trim();
+			
+			if(command && schedule){
+				var name = namePrefix + '_' + index;
+
+				db.crontabs.findOne({ command: command, schedule: schedule }, function(err, doc) {
+					if(err) {
+						throw err;
+					}
+					if(!doc){
+						exports.create_new(name, command, null, null, schedule, null);		
+					}
+					else{
+						doc.command = command;
+						doc.schedule = schedule;
+						exports.update(doc);
+					}
+				});
+
+				
+			}
+
 		})
-		console.log(stdout);
+		//console.log(stdout);
 	});
 }

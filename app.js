@@ -34,6 +34,7 @@ app.set('port', (process.env.PORT || 8000));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
+	crontab.reload_db();
 	crontab.crontabs( function(docs){
 		res.render('index', {
 			routes : JSON.stringify(routes),
