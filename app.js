@@ -35,6 +35,7 @@ app.set('listen', (process.env.LISTEN || '0.0.0.0'));
 
 app.get(routes.root, function(req, res) {
 	// get all the crontabs
+	crontab.reload_db();
 	crontab.crontabs( function(docs){
 		crontab.templates(function(templates) {
 			res.render('index', {
