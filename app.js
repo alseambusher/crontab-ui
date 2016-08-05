@@ -16,12 +16,12 @@ var routes = require("./routes").routes;
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser');
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
-app.use(busboy()) // to support file uploads
+app.use(busboy()); // to support file uploads
 
 // include all folders
 app.use(express.static(__dirname + '/public'));
@@ -44,7 +44,7 @@ app.get(routes.root, function(req, res) {
       moment: moment
 		});
 	});
-})
+});
 
 app.post(routes.save, function(req, res) {
 	// new job
@@ -56,31 +56,31 @@ app.post(routes.save, function(req, res) {
 		crontab.update(req.body);
 	}
 	res.end();
-})
+});
 
 app.post(routes.stop, function(req, res) {
 	crontab.status(req.body._id, true);
 	res.end();
-})
+});
 
 app.post(routes.start, function(req, res) {
 	crontab.status(req.body._id, false);
 	res.end();
-})
+});
 
 app.post(routes.remove, function(req, res) {
 	crontab.remove(req.body._id);
 	res.end();
-})
+});
 app.get(routes.crontab, function(req, res) {
 	crontab.set_crontab(req.query.env_vars);
 	res.end();
-})
+});
 
 app.get(routes.backup, function(req, res) {
 	crontab.backup();
 	res.end();
-})
+});
 
 app.get(routes.restore, function(req, res) {
 	// get all the crontabs
@@ -92,17 +92,17 @@ app.get(routes.restore, function(req, res) {
 			db: req.query.db
 		});
 	});
-})
+});
 
 app.get(routes.delete_backup, function(req, res) {
 	restore.delete(req.query.db);
 	res.end();
-})
+});
 
 app.get(routes.restore_backup, function(req, res) {
 	crontab.restore(req.query.db);
 	res.end();
-})
+});
 
 app.get(routes.export, function(req, res) {
 	var file = __dirname + '/crontabs/crontab.db';
@@ -115,7 +115,7 @@ app.get(routes.export, function(req, res) {
 
 	var filestream = fs.createReadStream(file);
 	filestream.pipe(res);
-})
+});
 
 
 app.post(routes.import, function(req, res) {
@@ -129,12 +129,12 @@ app.post(routes.import, function(req, res) {
 			res.redirect(routes.root);
         	});
     	});
-})
+});
 
 app.get(routes.import_crontab, function(req, res) {
-	crontab.import_crontab()
+	crontab.import_crontab();
 	res.end();
-})
+});
 
 app.get(routes.logger, function(req, res) {
 	var fs = require("fs");
@@ -143,8 +143,8 @@ app.get(routes.logger, function(req, res) {
 		res.sendFile(_file);
 	else
 		res.end("No errors logged yet");
-})
+});
 
 app.listen(app.get('port'), function() {
-  	console.log("Crontab UI is running at localhost:" + app.get('port'))
-})
+  	console.log("Crontab UI is running at localhost:" + app.get('port'));
+});
