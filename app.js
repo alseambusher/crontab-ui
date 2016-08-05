@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
+var moment = require('moment');
 
 var path = require('path');
 var mime = require('mime');
@@ -38,7 +39,8 @@ app.get(routes.root, function(req, res) {
 			routes : JSON.stringify(routes),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
-			env : crontab.get_env()
+			env : crontab.get_env(),
+      moment: moment
 		});
 	});
 })
