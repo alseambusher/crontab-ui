@@ -20,65 +20,71 @@
 
     <section class="main-content">
       <h1>
-<a id="crontab-ui" class="anchor" href="#crontab-ui" aria-hidden="true"><span class="octicon octicon-link"></span></a>Crontab UI</h1>
+<a id="crontab-ui" class="anchor" href="#crontab-ui" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Crontab UI</h1>
 
 <p>Editing the plain text crontab is error prone for managing jobs, e.g., adding jobs, deleting jobs, or pausing jobs. A small mistake can easily bring down all the jobs and might cost you a lot of time. With Crontab UI, it is very easy to manage crontab. Here are the key features of Crontab UI.</p>
 
-<p><img src="http://alseambusher.github.io/files/flow.gif" alt="flow"></p>
+<p><img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/flow.gif" alt="flow"></p>
 
 <ol>
-<li>Easy setup</li>
+<li>Easy setup. You can even import from existing crontab.</li>
 <li>Safe adding, deleting or pausing jobs. Easy to maintain hundreds of jobs.</li>
 <li>Backup your crontabs.</li>
 <li>Export crontab and deploy on other machines without much hassle.</li>
-<li>Error log support (NEW)</li>
+<li>Error log support.</li>
 </ol>
 
 <p>Read <a href="http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html">this</a> to see more details.</p>
 
 <h2>
-<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup</h2>
 
-<pre><code>npm install crontab-ui
+<pre><code>npm install -g crontab-ui
 crontab-ui
 </code></pre>
 
 <h3>
-<a id="adding-deleting-pausing-and-resuming-jobs" class="anchor" href="#adding-deleting-pausing-and-resuming-jobs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Adding, deleting, pausing and resuming jobs.</h3>
+<a id="adding-deleting-pausing-and-resuming-jobs" class="anchor" href="#adding-deleting-pausing-and-resuming-jobs" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Adding, deleting, pausing and resuming jobs.</h3>
 
 <p>Once setup Crontab UI provides you with a web interface using which you can manage all the jobs without much hassle.</p>
 
-<p><img src="http://2.bp.blogspot.com/-kU8K-suZYMY/VX1Ml5b_JOI/AAAAAAAABEo/MAfgg7hWEz8/s1600/1.png" alt="basic"></p>
+<p><img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/main.png" alt="basic"></p>
 
 <h3>
-<a id="backup-and-restore-crontab" class="anchor" href="#backup-and-restore-crontab" aria-hidden="true"><span class="octicon octicon-link"></span></a>Backup and restore crontab</h3>
+<a id="import-from-existing-crontab" class="anchor" href="#import-from-existing-crontab" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Import from existing crontab</h3>
+
+<p>Import from existing crontab file automatically.
+<img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/import.gif" alt="import"></p>
+
+<h3>
+<a id="backup-and-restore-crontab" class="anchor" href="#backup-and-restore-crontab" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Backup and restore crontab</h3>
 
 <p>Keep backups of your crontab in case you mess up.
-<img src="http://3.bp.blogspot.com/-qHxCbtNny9I/VX1M7k5UE3I/AAAAAAAABEw/cpiPgS9-gXo/s1600/2.png" alt="backup"></p>
+<img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/backup.png" alt="backup"></p>
 
 <h3>
-<a id="export-and-import-crontab-on-multiple-instances-of-crontab-ui" class="anchor" href="#export-and-import-crontab-on-multiple-instances-of-crontab-ui" aria-hidden="true"><span class="octicon octicon-link"></span></a>Export and import crontab on multiple instances of Crontab UI.</h3>
+<a id="export-and-import-crontab-on-multiple-instances-of-crontab-ui" class="anchor" href="#export-and-import-crontab-on-multiple-instances-of-crontab-ui" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Export and import crontab on multiple instances of Crontab UI.</h3>
 
 <p>If you want to run the same jobs on multiple machines simply export from one instance and import the same on the other. No SSH, No copy paste!</p>
 
-<p><img src="http://2.bp.blogspot.com/-trpHt_etz5I/VX1NyElIicI/AAAAAAAABE4/GTZFBCfybLk/s1600/3.png" alt="export"></p>
+<p><img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/import_db.png" alt="export"></p>
 
 <p>But make sure to take a backup before importing.</p>
 
 <h3>
-<a id="see-when-the-job-is-going-to-run-next" class="anchor" href="#see-when-the-job-is-going-to-run-next" aria-hidden="true"><span class="octicon octicon-link"></span></a>See when the job is going to run next.</h3>
+<a id="separate-error-log-support-for-every-job" class="anchor" href="#separate-error-log-support-for-every-job" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Separate error log support for every job</h3>
 
-<p><img src="http://4.bp.blogspot.com/-gN-wLmhd5Os/VX6fQ5wM2LI/AAAAAAAABcA/_Ej0PqrByBU/s1600/next.gif" alt="future"></p>
-
-<h3>
-<a id="separate-error-log-support-for-every-job-new" class="anchor" href="#separate-error-log-support-for-every-job-new" aria-hidden="true"><span class="octicon octicon-link"></span></a>Separate error log support for every job (NEW)</h3>
-
-<p><img src="http://alseambusher.github.io/files/crontab_ui_log_feature.gif" alt="logs"></p>
+<p><img src="https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/log.gif" alt="logs"></p>
 
 <h3>
-<a id="contribute" class="anchor" href="#contribute" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contribute</h3>
+<a id="contribute" class="anchor" href="#contribute" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contribute</h3>
 
 <p>Fork Crontab UI and contribute to it. Pull requests are encouraged.</p>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
+
+<p><a href="LICENSE.md">MIT</a></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/alseambusher/crontab-ui">Crontab-ui</a> is maintained by <a href="https://github.com/alseambusher">alseambusher</a>.</span>
