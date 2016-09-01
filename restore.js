@@ -11,9 +11,8 @@ exports.crontabs = function(db_name, callback){
 	db.find({}).sort({ created: -1 }).exec(function(err, docs){
 		callback(docs);
 	});
-}
+};
 
 exports.delete = function(db_name){
 	fs.unlink(__dirname + '/crontabs/' + db_name);
-}
-
+};

@@ -16,7 +16,7 @@ crontab = function(name, command, schedule, stopped, logging){
 	data.name = name;
 	data.command = command;
 	data.schedule = schedule;
-	if(stopped != null) {
+	if(stopped !== null) {
 		data.stopped = stopped;
 	}
 	data.timestamp = (new Date()).toString();
