@@ -146,5 +146,5 @@ app.get(routes.logger, function(req, res) {
 });
 
 app.listen(app.get('port'), function() {
-  	console.log("Crontab UI is running at localhost:" + app.get('port'));
+  	console.log("Crontab UI is running at http://localhost:" + app.get('port'));
 });
