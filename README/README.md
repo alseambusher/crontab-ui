@@ -17,6 +17,10 @@ Read [this](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-wa
 
     npm install -g crontab-ui
     crontab-ui
+    
+If you need to set/use an alternate port, you may do so by setting an environment variable before starting the process:
+
+    PORT=9000 crontab-ui
 
 ###Adding, deleting, pausing and resuming jobs.
 
