@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 /*********** MessageBox ****************/
 // simply show info.  Only close button
 function infoMessageBox(message, title){
@@ -84,7 +85,6 @@ function editJob(_id){
 		}
 		schedule = job.schedule;
 		job_command = job.command;
-		console.log(job.logging)
 		if (job.logging && job.logging != "false")
 			$("#job-logging").prop("checked", true);
 		job_string();
@@ -95,13 +95,13 @@ function editJob(_id){
 		// TODO good old boring validations
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
-		})
+		});
 	});
 }
 
 function newJob(){
-	schedule = ""
-	job_command = ""
+	schedule = "";
+	job_command = "";
 	$("#job-minute").val("*");
 	$("#job-hour").val("*");
 	$("#job-day").val("*");
@@ -117,7 +117,7 @@ function newJob(){
 		// TODO good old boring validations
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
-		})
+		});
 	});
 }
 

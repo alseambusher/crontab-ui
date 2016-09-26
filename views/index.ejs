@@ -13,7 +13,7 @@
 	$(function () {
 		// initialize tooltips
 		$('[data-toggle="tooltip"]').tooltip();
-		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"") %>');
+		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"").replace(/\'/g,"\\\'") %>');
 		routes = JSON.parse('<%- routes %>');
 		$("#env_vars").val(`<%- env  %>`);
 	})
@@ -89,7 +89,6 @@
 					<a class="btn btn-info" onclick="startJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</a>
 		<% } %>
 					<a class="btn btn-danger" onclick="deleteJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
-
 				</td>
 			</tr>
 	<% }); %>
