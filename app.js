@@ -72,9 +72,11 @@ app.post(routes.remove, function(req, res) {
 	crontab.remove(req.body._id);
 	res.end();
 });
-app.get(routes.crontab, function(req, res) {
-	crontab.set_crontab(req.query.env_vars);
-	res.end();
+app.get(routes.crontab, function(req, res, next) {
+	crontab.set_crontab(req.query.env_vars, function(err) {
+		if (err) next(err);
+		else res.end();
+	});
 });
 
 app.get(routes.backup, function(req, res) {
@@ -127,8 +129,8 @@ app.post(routes.import, function(req, res) {
 		fstream.on('close', function () {
 			crontab.reload_db();
 			res.redirect(routes.root);
-        	});
-    	});
+		});
+	});
 });
 
 app.get(routes.import_crontab, function(req, res) {
@@ -145,6 +147,24 @@ app.get(routes.logger, function(req, res) {
 		res.end("No errors logged yet");
 });
 
+// error handler
+app.use(function(err, req, res, next) {
+	var data = {};
+	var statusCode = err.statusCode || 500;
+
+	data.message = err.message || 'Internal Server Error';
+
+	if (process.env.NODE_ENV === 'development' && err.stack) {
+		data.stack = err.stack
+	}
+
+	if (parseInt(data.statusCode) >= 500) {
+		console.error(err);
+	}
+
+	res.status(statusCode).json(data);
+});
+
 app.listen(app.get('port'), function() {
-  	console.log("Crontab UI is running at http://localhost:" + app.get('port'));
+	console.log("Crontab UI is running at http://localhost:" + app.get('port'));
 });
