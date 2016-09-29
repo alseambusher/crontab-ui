@@ -11,9 +11,7 @@ function errorMessageBox(message) {
 	var msg =
 		"Operation failed: " + message + ". " +
 		"Please see error log for details.";
-	$("#info-body").html(msg);
-	$("#info-title").html("Error");
-	$("#info-popup").modal('show');
+	infoMessageBox(msg, "Error");
 }
 // modal with full control
 function messageBox(body, title, ok_text, close_text, callback){
