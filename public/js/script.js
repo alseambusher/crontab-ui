@@ -6,6 +6,15 @@ function infoMessageBox(message, title){
 	$("#info-title").html(title);
 	$("#info-popup").modal('show');
 }
+// like info, but for errors.
+function errorMessageBox(message) {
+	var msg =
+		"Operation failed: " + message + ". " +
+		"Please see error log for details.";
+	$("#info-body").html(msg);
+	$("#info-title").html("Error");
+	$("#info-popup").modal('show');
+}
 // modal with full control
 function messageBox(body, title, ok_text, close_text, callback){
 	$("#modal-body").html(body);
@@ -50,6 +59,8 @@ function setCrontab(){
 		$.get(routes.crontab, { "env_vars": $("#env_vars").val() }, function(){
 			// TODO show only if success
 			infoMessageBox("Successfuly set crontab file!","Information");
+		}).fail(function(response) {
+			errorMessageBox(response.statusText,"Error");
 		});
 	});
 }
