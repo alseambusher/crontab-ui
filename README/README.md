@@ -21,6 +21,8 @@ Read [this](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-wa
 If you need to set/use an alternate port, you may do so by setting an environment variable before starting the process:
 
     PORT=9000 crontab-ui
+    
+Also, you may have to **set permissions** for your `node_modules` folder. Refer [this](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
 If you need to autosave your changes to crontab directly:
 
