@@ -1,3 +1,4 @@
+/*jshint esversion: 6*/
 //load database
 var Datastore = require('nedb');
 var db = new Datastore({ filename: __dirname + '/crontabs/crontab.db' });
@@ -68,7 +69,6 @@ exports.set_crontab = function(env_vars, callback){
 					log_file = exports.log_folder + "/" + tab._id + ".log";
 					if(tab.command[tab.command.length-1] != ";") // add semicolon
 						tab.command +=";";
-					//{ command; } 2>/tmp/<id>.log|| {if test -f /tmp/<id>; then date >> <log file>; cat /tmp/<id>.log >> <log file>; rm /tmp<id>.log }
 					crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi \n";
 				}
 				else {
@@ -129,7 +129,7 @@ exports.restore = function(db_name){
 	db.loadDatabase(); // reload the database
 };
 
-exports.reload_db= function(){
+exports.reload_db = function(){
 	db.loadDatabase();
 };
 
@@ -169,4 +169,9 @@ exports.import_crontab = function(){
 			}
 		});
 	});
+};
+
+exports.autosave_crontab = function(callback) {
+	let env_vars = exports.get_env();
+	exports.set_crontab(env_vars, callback);
 };
