@@ -26,6 +26,9 @@ function messageBox(body, title, ok_text, close_text, callback){
 
 
 /*********** crontab actions ****************/
+// TODO get rid of global variables
+var schedule = "";
+var job_command = "";
 
 function deleteJob(_id){
 	// TODO fix this. pass callback properly
@@ -84,7 +87,7 @@ function editJob(_id){
 		$("#job-name").val(job.name);
 		$("#job-command").val(job.command);
 		// if macro not used
-		if(job.schedule.indexOf("@") != 0){
+		if(job.schedule.indexOf("@") !== 0){
 			var components = job.schedule.split(" ");
 			$("#job-minute").val(components[0]);
 			$("#job-hour").val(components[1]);
@@ -102,6 +105,9 @@ function editJob(_id){
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
+		if (!schedule) {
+			schedule = "* * * * *";
+		}
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
 		});
@@ -124,6 +130,9 @@ function newJob(){
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
+		if (!schedule) {
+			schedule = "* * * * *";
+		}
 		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1, logging: $("#job-logging").prop("checked")}, function(){
 			location.reload();
 		});
@@ -162,8 +171,6 @@ function import_db(){
 
 
 // script corresponding to job popup management
-var schedule = "";
-var job_command = "";
 function job_string(){
 	$("#job-string").val(schedule + " " + job_command);
 	return schedule + " " + job_command;

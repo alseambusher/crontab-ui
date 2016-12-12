@@ -65,11 +65,17 @@ exports.set_crontab = function(env_vars, callback){
 		tabs.forEach(function(tab){
 			if(!tab.stopped) {
 				if (tab.logging && tab.logging == "true") {
-					tmp_log = "/tmp/" + tab._id + ".log";
-					log_file = exports.log_folder + "/" + tab._id + ".log";
+					let tmp_log = "/tmp/" + tab._id + ".log";
+					let log_file = exports.log_folder + "/" + tab._id + ".log";
 					if(tab.command[tab.command.length-1] != ";") // add semicolon
 						tab.command +=";";
-					crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi \n";
+					// hook is in beta
+					if (tab.hook){
+						let tmp_hook = "/tmp/" + tab._id + ".hook";
+						crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + tmp_hook + ") 3>&1 1>&2 2>&3 | tee " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi; if test -f " + tmp_hook + "; then " + tab.hook + " < " + tmp_hook + "; rm " + tmp_hook + "; fi \n";
+					} else {
+						crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi \n";
+					}
 				}
 				else {
 					crontab_string += tab.schedule + " " + tab.command + "\n";
@@ -96,7 +102,7 @@ exports.get_backup_names = function(){
 	var backups = [];
 	fs.readdirSync(__dirname + '/crontabs').forEach(function(file){
 		// file name begins with backup
-		if(file.indexOf("backup") == 0){
+		if(file.indexOf("backup") === 0){
 			backups.push(file);
 		}
 	});
@@ -150,7 +156,10 @@ exports.import_crontab = function(){
 			var command = line.replace(regex, '').trim();
 			var schedule = line.replace(command, '').trim();
 
-			if(command && schedule){
+			var is_valid = false;
+			try { is_valid = cron_parser.parseString(line).expressions.length > 0; } catch (e){}
+
+			if(command && schedule && is_valid){
 				var name = namePrefix + '_' + index;
 
 				db.findOne({ command: command, schedule: schedule }, function(err, doc) {
