@@ -169,6 +169,63 @@ function import_db(){
 	});
 }
 
+function setMailConfig(a){
+	let data = JSON.parse(a.getAttribute("data-json"));
+	let container = document.createElement("div");
+
+	let message = "<p>This is based on nodemailer. Refer <a href='https://github.com/nodemailer/nodemailer'>this</a> for more details.</p>";
+	container.innerHTML += message;
+
+	let transporterLabel = document.createElement("label");
+	transporterLabel.innerHTML = "Transporter";
+	let transporterInput = document.createElement("input");
+	transporterInput.type = "text";
+	transporterInput.id = "transporterInput";
+	transporterInput.setAttribute("placeholder", config.transporterStr);
+	transporterInput.className = "form-control";
+	if (data.transporterStr){
+		transporterInput.setAttribute("value", data.transporterStr);
+	}
+	container.appendChild(transporterLabel);
+	container.appendChild(transporterInput);
+
+	container.innerHTML += "<br/>";
+
+	let mailOptionsLabel = document.createElement("label");
+	mailOptionsLabel.innerHTML = "Mail Config";
+	let mailOptionsInput = document.createElement("textarea");
+	mailOptionsInput.setAttribute("placeholder", JSON.stringify(config.mailOptions, null, 2));
+	mailOptionsInput.className = "form-control";
+	mailOptionsInput.id = "mailOptionsInput";
+	mailOptionsInput.setAttribute("rows", "10");
+	if (data.mailOptions)
+		mailOptionsInput.innerHTML = JSON.stringify(data.mailOptions, null, 2);
+	container.appendChild(mailOptionsLabel);
+	container.appendChild(mailOptionsInput);
+
+	container.innerHTML += "<br/>";
+
+	let button = document.createElement("a");
+	button.className = "btn btn-primary btn-small";
+	button.innerHTML = "Use Defaults";
+	button.onclick = function(){
+		document.getElementById("transporterInput").value = config.transporterStr;
+		document.getElementById("mailOptionsInput").innerHTML = JSON.stringify(config.mailOptions, null, 2);
+	};
+	container.appendChild(button);
+
+	messageBox(container, "Mailing", null, null, function(){
+		let transporterStr = document.getElementById("transporterInput").value;
+		let mailOptions = JSON.parse(document.getElementById("mailOptionsInput").innerHTML);
+		if (transporterStr && mailOptions){
+				a.setAttribute("data-json", JSON.stringify({transporterStr: transporterStr, mailOptions: mailOptions}));
+		}
+	});
+}
+
+function setHookConfig(a){
+	messageBox("<p>Coming Soon</p>", "Hooks", null, null, null);
+}
 
 // script corresponding to job popup management
 function job_string(){

@@ -1,6 +1,6 @@
 {
   "name": "crontab-ui",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Easy and safe way to manage your crontab file",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,8 @@
     "node": "latest"
   },
    "bin": {
-     "crontab-ui": "bin/crontab-ui.js"
+     "crontab-ui": "bin/crontab-ui.js",
+     "crontab-ui-mailer": "bin/crontab-ui-mailer.js"
   },
   "repository": {
     "type": "git",

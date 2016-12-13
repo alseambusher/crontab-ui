@@ -45,6 +45,8 @@ exports.status = function(_id, stopped){
 exports.remove = function(_id){
 	db.remove({_id: _id}, {});
 };
+
+// Iterates through all the crontab entries in the db and calls the callback with the entries
 exports.crontabs = function(callback){
 	db.find({}).sort({ created: -1 }).exec(function(err, docs){
 		for(var i=0; i<docs.length; i++){
@@ -56,6 +58,8 @@ exports.crontabs = function(callback){
 		callback(docs);
 	});
 };
+
+// Set actual crontab file from the db
 exports.set_crontab = function(env_vars, callback){
 	exports.crontabs( function(tabs){
 		var crontab_string = "";
@@ -72,9 +76,22 @@ exports.set_crontab = function(env_vars, callback){
 					// hook is in beta
 					if (tab.hook){
 						let tmp_hook = "/tmp/" + tab._id + ".hook";
-						crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + tmp_hook + ") 3>&1 1>&2 2>&3 | tee " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi; if test -f " + tmp_hook + "; then " + tab.hook + " < " + tmp_hook + "; rm " + tmp_hook + "; fi \n";
+						crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + tmp_hook + ") 3>&1 1>&2 2>&3 | tee " + tmp_log +
+						"; if test -f " + tmp_log +
+							"; then date >> " + log_file +
+							"; cat " + tmp_log + " >> " + log_file +
+							"; rm " + tmp_log +
+						"; fi; if test -f " + tmp_hook +
+							"; then " + tab.hook + " < " + tmp_hook +
+							"; rm " + tmp_hook +
+						"; fi \n";
 					} else {
-						crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +"; if test -f " + tmp_log +"; then date >> " + log_file + "; cat " + tmp_log + " >> " + log_file + "; rm " + tmp_log + "; fi \n";
+						crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +
+						"; if test -f " + tmp_log +
+							"; then date >> " + log_file +
+							"; cat " + tmp_log + " >> " + log_file +
+							"; rm " + tmp_log +
+						"; fi \n";
 					}
 				}
 				else {
