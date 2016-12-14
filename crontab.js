@@ -15,7 +15,7 @@ var os = require("os");
 exports.log_folder = __dirname + '/crontabs/logs';
 exports.env_file = __dirname + '/crontabs/env.db';
 
-crontab = function(name, command, schedule, stopped, logging){
+crontab = function(name, command, schedule, stopped, logging, mailing){
 	var data = {};
 	data.name = name;
 	data.command = command;
@@ -25,17 +25,20 @@ crontab = function(name, command, schedule, stopped, logging){
 	}
 	data.timestamp = (new Date()).toString();
 	data.logging = logging;
+	if (!mailing)
+		mailing = {};
+	data.mailing = mailing;
 	return data;
 };
 
-exports.create_new = function(name, command, schedule, logging){
-	var tab = crontab(name, command, schedule, false, logging);
+exports.create_new = function(name, command, schedule, logging, mailing){
+	var tab = crontab(name, command, schedule, false, logging, mailing);
 	tab.created = new Date().valueOf();
 	db.insert(tab);
 };
 
 exports.update = function(data){
-	db.update({_id: data._id}, crontab(data.name, data.command, data.schedule, null, data.logging));
+	db.update({_id: data._id}, crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing));
 };
 
 exports.status = function(_id, stopped){

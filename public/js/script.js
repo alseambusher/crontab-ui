@@ -95,6 +95,9 @@ function editJob(_id){
 			$("#job-month").val(components[3]);
 			$("#job-week").val(components[4]);
 		}
+		if (job.mailing) {
+			$("#job-mailing").attr("data-json", JSON.stringify(job.mailing));
+		}
 		schedule = job.schedule;
 		job_command = job.command;
 		if (job.logging && job.logging != "false")
@@ -108,7 +111,10 @@ function editJob(_id){
 		if (!schedule) {
 			schedule = "* * * * *";
 		}
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id, logging: $("#job-logging").prop("checked")}, function(){
+		let name = $("#job-name").val();
+		let mailing = JSON.parse($("#job-mailing").attr("data-json"));
+		let logging = $("#job-logging").prop("checked");
+		$.post(routes.save, {name: name, command: job_command , schedule: schedule, _id: _id, logging: logging, mailing: mailing}, function(){
 			location.reload();
 		});
 	});
@@ -126,6 +132,7 @@ function newJob(){
 	$("#job").modal("show");
 	$("#job-name").val("");
 	$("#job-command").val("");
+	$("#job-mailing").attr("data-json", "{}");
 	job_string();
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
@@ -133,7 +140,10 @@ function newJob(){
 		if (!schedule) {
 			schedule = "* * * * *";
 		}
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1, logging: $("#job-logging").prop("checked")}, function(){
+		let name = $("#job-name").val();
+		let mailing = JSON.parse($("#job-mailing").attr("data-json"));
+		let logging = $("#job-logging").prop("checked");
+		$.post(routes.save, {name: name, command: job_command , schedule: schedule, _id: -1, logging: logging, mailing: mailing}, function(){
 			location.reload();
 		});
 	});
@@ -173,7 +183,7 @@ function setMailConfig(a){
 	let data = JSON.parse(a.getAttribute("data-json"));
 	let container = document.createElement("div");
 
-	let message = "<p>This is based on nodemailer. Refer <a href='https://github.com/nodemailer/nodemailer'>this</a> for more details.</p>";
+	let message = "<p>This is based on nodemailer. Refer <a href='https://github.com/alseambusher/crontab-ui/tree/master/README/mail.md'>this</a> for more details.</p>";
 	container.innerHTML += message;
 
 	let transporterLabel = document.createElement("label");

@@ -57,7 +57,7 @@ If it is a new job @param _id is set to -1
 app.post(routes.save, function(req, res) {
 	// new job
 	if(req.body._id == -1){
-		crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging);
+		crontab.create_new(req.body.name, req.body.command, req.body.schedule, req.body.logging, req.body.mailing);
 	}
 	// edit job
 	else{
