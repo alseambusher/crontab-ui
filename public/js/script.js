@@ -6,6 +6,13 @@ function infoMessageBox(message, title){
 	$("#info-title").html(title);
 	$("#info-popup").modal('show');
 }
+// like info, but for errors.
+function errorMessageBox(message) {
+	var msg =
+		"Operation failed: " + message + ". " +
+		"Please see error log for details.";
+	infoMessageBox(msg, "Error");
+}
 // modal with full control
 function messageBox(body, title, ok_text, close_text, callback){
 	$("#modal-body").html(body);
@@ -19,6 +26,9 @@ function messageBox(body, title, ok_text, close_text, callback){
 
 
 /*********** crontab actions ****************/
+// TODO get rid of global variables
+var schedule = "";
+var job_command = "";
 
 function deleteJob(_id){
 	// TODO fix this. pass callback properly
@@ -50,6 +60,8 @@ function setCrontab(){
 		$.get(routes.crontab, { "env_vars": $("#env_vars").val() }, function(){
 			// TODO show only if success
 			infoMessageBox("Successfuly set crontab file!","Information");
+		}).fail(function(response) {
+			errorMessageBox(response.statusText,"Error");
 		});
 	});
 }
@@ -75,13 +87,16 @@ function editJob(_id){
 		$("#job-name").val(job.name);
 		$("#job-command").val(job.command);
 		// if macro not used
-		if(job.schedule.indexOf("@") != 0){
+		if(job.schedule.indexOf("@") !== 0){
 			var components = job.schedule.split(" ");
 			$("#job-minute").val(components[0]);
 			$("#job-hour").val(components[1]);
 			$("#job-day").val(components[2]);
 			$("#job-month").val(components[3]);
 			$("#job-week").val(components[4]);
+		}
+		if (job.mailing) {
+			$("#job-mailing").attr("data-json", JSON.stringify(job.mailing));
 		}
 		schedule = job.schedule;
 		job_command = job.command;
@@ -93,7 +108,13 @@ function editJob(_id){
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: _id, logging: $("#job-logging").prop("checked")}, function(){
+		if (!schedule) {
+			schedule = "* * * * *";
+		}
+		let name = $("#job-name").val();
+		let mailing = JSON.parse($("#job-mailing").attr("data-json"));
+		let logging = $("#job-logging").prop("checked");
+		$.post(routes.save, {name: name, command: job_command , schedule: schedule, _id: _id, logging: logging, mailing: mailing}, function(){
 			location.reload();
 		});
 	});
@@ -111,11 +132,18 @@ function newJob(){
 	$("#job").modal("show");
 	$("#job-name").val("");
 	$("#job-command").val("");
+	$("#job-mailing").attr("data-json", "{}");
 	job_string();
 	$("#job-save").unbind("click"); // remove existing events attached to this
 	$("#job-save").click(function(){
 		// TODO good old boring validations
-		$.post(routes.save, {name: $("#job-name").val(), command: job_command , schedule: schedule, _id: -1, logging: $("#job-logging").prop("checked")}, function(){
+		if (!schedule) {
+			schedule = "* * * * *";
+		}
+		let name = $("#job-name").val();
+		let mailing = JSON.parse($("#job-mailing").attr("data-json"));
+		let logging = $("#job-logging").prop("checked");
+		$.post(routes.save, {name: name, command: job_command , schedule: schedule, _id: -1, logging: logging, mailing: mailing}, function(){
 			location.reload();
 		});
 	});
@@ -151,10 +179,65 @@ function import_db(){
 	});
 }
 
+function setMailConfig(a){
+	let data = JSON.parse(a.getAttribute("data-json"));
+	let container = document.createElement("div");
+
+	let message = "<p>This is based on nodemailer. Refer <a href='https://github.com/alseambusher/crontab-ui/tree/master/README/mail.md'>this</a> for more details.</p>";
+	container.innerHTML += message;
+
+	let transporterLabel = document.createElement("label");
+	transporterLabel.innerHTML = "Transporter";
+	let transporterInput = document.createElement("input");
+	transporterInput.type = "text";
+	transporterInput.id = "transporterInput";
+	transporterInput.setAttribute("placeholder", config.transporterStr);
+	transporterInput.className = "form-control";
+	if (data.transporterStr){
+		transporterInput.setAttribute("value", data.transporterStr);
+	}
+	container.appendChild(transporterLabel);
+	container.appendChild(transporterInput);
+
+	container.innerHTML += "<br/>";
+
+	let mailOptionsLabel = document.createElement("label");
+	mailOptionsLabel.innerHTML = "Mail Config";
+	let mailOptionsInput = document.createElement("textarea");
+	mailOptionsInput.setAttribute("placeholder", JSON.stringify(config.mailOptions, null, 2));
+	mailOptionsInput.className = "form-control";
+	mailOptionsInput.id = "mailOptionsInput";
+	mailOptionsInput.setAttribute("rows", "10");
+	if (data.mailOptions)
+		mailOptionsInput.innerHTML = JSON.stringify(data.mailOptions, null, 2);
+	container.appendChild(mailOptionsLabel);
+	container.appendChild(mailOptionsInput);
+
+	container.innerHTML += "<br/>";
+
+	let button = document.createElement("a");
+	button.className = "btn btn-primary btn-small";
+	button.innerHTML = "Use Defaults";
+	button.onclick = function(){
+		document.getElementById("transporterInput").value = config.transporterStr;
+		document.getElementById("mailOptionsInput").innerHTML = JSON.stringify(config.mailOptions, null, 2);
+	};
+	container.appendChild(button);
+
+	messageBox(container, "Mailing", null, null, function(){
+		let transporterStr = document.getElementById("transporterInput").value;
+		let mailOptions = JSON.parse(document.getElementById("mailOptionsInput").innerHTML);
+		if (transporterStr && mailOptions){
+				a.setAttribute("data-json", JSON.stringify({transporterStr: transporterStr, mailOptions: mailOptions}));
+		}
+	});
+}
+
+function setHookConfig(a){
+	messageBox("<p>Coming Soon</p>", "Hooks", null, null, null);
+}
 
 // script corresponding to job popup management
-var schedule = "";
-var job_command = "";
 function job_string(){
 	$("#job-string").val(schedule + " " + job_command);
 	return schedule + " " + job_command;
