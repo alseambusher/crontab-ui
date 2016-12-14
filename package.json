@@ -14,7 +14,8 @@
     "mime": "latest",
     "cron-parser": "latest",
     "connect-busboy": "latest",
-    "moment": "latest"
+    "moment": "latest",
+    "nodemailer": "latest"
   },
   "engines": {
     "node": "latest"

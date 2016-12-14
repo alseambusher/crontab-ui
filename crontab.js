@@ -10,7 +10,6 @@ db.loadDatabase(function (err) {
 var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
-var os = require("os");
 
 exports.log_folder = __dirname + '/crontabs/logs';
 exports.env_file = __dirname + '/crontabs/env.db';
@@ -62,6 +61,12 @@ exports.crontabs = function(callback){
 	});
 };
 
+exports.get_crontab = function(_id, callback) {
+	db.find({_id: _id}).exec(function(err, docs){
+		callback(docs[0]);
+	});
+};
+
 // Set actual crontab file from the db
 exports.set_crontab = function(env_vars, callback){
 	exports.crontabs( function(tabs){
@@ -71,35 +76,33 @@ exports.set_crontab = function(env_vars, callback){
 		}
 		tabs.forEach(function(tab){
 			if(!tab.stopped) {
+				let stderr = "/tmp/" + tab._id + ".stderr";
+				let stdout = "/tmp/" + tab._id + ".stdout";
+				let log_file = exports.log_folder + "/" + tab._id + ".log";
+
+				if(tab.command[tab.command.length-1] != ";") // add semicolon
+					tab.command +=";";
+
+				crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + stdout + ") 3>&1 1>&2 2>&3 | tee " + stderr;
+
 				if (tab.logging && tab.logging == "true") {
-					let tmp_log = "/tmp/" + tab._id + ".log";
-					let log_file = exports.log_folder + "/" + tab._id + ".log";
-					if(tab.command[tab.command.length-1] != ";") // add semicolon
-						tab.command +=";";
-					// hook is in beta
-					if (tab.hook){
-						let tmp_hook = "/tmp/" + tab._id + ".hook";
-						crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + tmp_hook + ") 3>&1 1>&2 2>&3 | tee " + tmp_log +
-						"; if test -f " + tmp_log +
-							"; then date >> " + log_file +
-							"; cat " + tmp_log + " >> " + log_file +
-							"; rm " + tmp_log +
-						"; fi; if test -f " + tmp_hook +
-							"; then " + tab.hook + " < " + tmp_hook +
-							"; rm " + tmp_hook +
-						"; fi \n";
-					} else {
-						crontab_string += tab.schedule + " { " + tab.command + " } 2> " + tmp_log +
-						"; if test -f " + tmp_log +
-							"; then date >> " + log_file +
-							"; cat " + tmp_log + " >> " + log_file +
-							"; rm " + tmp_log +
-						"; fi \n";
-					}
+					crontab_string += "; if test -f " + stderr +
+					"; then date >> " + log_file +
+					"; cat " + stderr + " >> " + log_file +
+					"; fi";
 				}
-				else {
-					crontab_string += tab.schedule + " " + tab.command + "\n";
+
+				if (tab.hook) {
+					crontab_string += "; if test -f " + stdout +
+					"; then " + tab.hook + " < " + stdout +
+					"; fi";
 				}
+
+				if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
+					crontab_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
+				}
+
+				crontab_string += "\n";
 			}
 		});
 

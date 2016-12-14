@@ -224,11 +224,26 @@ function setMailConfig(a){
 	};
 	container.appendChild(button);
 
+	let buttonClear = document.createElement("a");
+	buttonClear.className = "btn btn-default btn-small";
+	buttonClear.innerHTML = "Clear";
+	buttonClear.onclick = function(){
+		document.getElementById("transporterInput").value = "";
+		document.getElementById("mailOptionsInput").innerHTML = "";
+	};
+	container.appendChild(buttonClear);
+
 	messageBox(container, "Mailing", null, null, function(){
 		let transporterStr = document.getElementById("transporterInput").value;
-		let mailOptions = JSON.parse(document.getElementById("mailOptionsInput").innerHTML);
+		let mailOptions;
+		try{
+			mailOptions = JSON.parse(document.getElementById("mailOptionsInput").value);
+		} catch (err) {}
+
 		if (transporterStr && mailOptions){
 				a.setAttribute("data-json", JSON.stringify({transporterStr: transporterStr, mailOptions: mailOptions}));
+		} else {
+				a.setAttribute("data-json", JSON.stringify({}));
 		}
 	});
 }
