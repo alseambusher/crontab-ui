@@ -1,14 +1,14 @@
 /*jshint esversion: 6*/
 // refer nodemailer for more info
 
-var transporterStr = 'smtps://user%40gmail.com:pass@smtp.gmail.com';
+var transporterStr = 'smtps://user%40gmail.com:password@smtp.gmail.com';
 
 var mailOptions = {
     from: '"Fred Foo 👥" <foo@blurdybloop.com>', // sender address
     to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-    subject: 'Hello ✔', // Subject line
-    text: 'Hello world 🐴', // plaintext body
-    html: '<b>Hello world 🐴</b>' // html body
+    subject: 'Job Test#21 Executed ✔', // Subject line
+    text: 'Test#21 results attached 🐴', // plaintext body
+    html: '<b>Test#21 🐴</b> results attached' // html body
 };
 
 if (typeof window === 'undefined') {
