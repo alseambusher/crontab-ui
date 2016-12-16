@@ -195,5 +195,26 @@ app.listen(app.get('port'), function() {
       });
     });
   }
+  if (process.argv.includes("--reset")){
+    console.log("Resetting crontab-ui");
+    let crontabdb = __dirname + "/crontabs/crontab.db";
+    let envdb = __dirname + "/crontabs/env.db";
+
+    console.log("Deleting " + crontabdb);
+    try{
+      fs.unlinkSync(crontabdb);
+    } catch (e) {
+      console.log("Unable to delete " + crontabdb);
+    }
+
+    console.log("Deleting " + envdb);
+    try{
+      fs.unlinkSync(envdb);
+    } catch (e) {
+      console.log("Unable to delete " + envdb);
+    }
+
+    crontab.reload_db();
+  }
 	console.log("Crontab UI is running at http://localhost:" + app.get('port'));
 });
