@@ -58,6 +58,9 @@ But make sure to take a backup before importing.
 ###Separate error log support for every job
 ![logs](https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/log.gif)
 
+###Donate
+Like the project? [Buy me a coffee](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U8328Q7VFZMTS)!
+
 ###Contribute
 Fork Crontab UI and contribute to it. Pull requests are encouraged.
 
