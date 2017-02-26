@@ -185,6 +185,13 @@ app.use(function(err, req, res, next) {
 });
 
 app.listen(app.get('port'), function() {
+  console.log("Node version:", process.versions.node);
+  fs.access(__dirname + "/crontabs/", fs.W_OK, function(err) {
+    if(err){
+      console.error("Write access to", __dirname + "/crontabs/", "DENIED.");
+      process.exit(1);
+    }
+  });
   // If --autosave is used then we will also save whatever is in the db automatically without having to mention it explictly
   // we do this by watching log file and setting a on change hook to it
   if (process.argv.includes("--autosave")){
