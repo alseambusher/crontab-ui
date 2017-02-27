@@ -204,8 +204,8 @@ app.listen(app.get('port'), function() {
   }
   if (process.argv.includes("--reset")){
     console.log("Resetting crontab-ui");
-    let crontabdb = __dirname + "/crontabs/crontab.db";
-    let envdb = __dirname + "/crontabs/env.db";
+    var crontabdb = __dirname + "/crontabs/crontab.db";
+    var envdb = __dirname + "/crontabs/env.db";
 
     console.log("Deleting " + crontabdb);
     try{
