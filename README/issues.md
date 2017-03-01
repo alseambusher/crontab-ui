@@ -14,3 +14,5 @@ __crontab-ui stopped working__ - It can happen that your crontab-ui can stop wor
 __Where is my root node_modules folder__ - You can find it by `npm root -g`
 
 __Mailing related issue__ - Refer [this](https://github.com/alseambusher/crontab-ui/blob/master/README/mail.md).
+
+__Run crontab-ui as a daemon__ - Install [pm2](https://github.com/Unitech/pm2) using `npm install -g pm2`. Then just run `pm2 start crontab-ui`
