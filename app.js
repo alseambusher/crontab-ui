@@ -30,6 +30,9 @@ app.use(express.static(__dirname + '/public/js'));
 app.use(express.static(__dirname + '/config'));
 app.set('views', __dirname + '/views');
 
+// set host to 127.0.0.1 or the value set by environment var HOST
+app.set('host', (process.env.HOST || '127.0.0.1'));
+
 // set port to 8000 or the value set by environment var PORT
 app.set('port', (process.env.PORT || 8000));
 
@@ -184,7 +187,7 @@ app.use(function(err, req, res, next) {
 	res.status(statusCode).json(data);
 });
 
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), app.get('host'), function() {
   console.log("Node version:", process.versions.node);
   fs.access(__dirname + "/crontabs/", fs.W_OK, function(err) {
     if(err){
@@ -223,5 +226,5 @@ app.listen(app.get('port'), function() {
 
     crontab.reload_db();
   }
-	console.log("Crontab UI is running at http://localhost:" + app.get('port'));
+	console.log("Crontab UI is running at http://" + app.get('host') + ":" + app.get('port'));
 });
