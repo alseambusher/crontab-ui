@@ -37,6 +37,7 @@ If you need to autosave your changes to crontab directly:
 * [Issues](https://github.com/alseambusher/crontab-ui/blob/master/README/issues.md)
 * [Setup Mailing after execution](http://lifepluslinux.blogspot.com/2017/03/introducing-mailing-in-crontab-ui.html)
 * [Integration with nginx and authentication](https://github.com/alseambusher/crontab-ui/blob/master/README/nginx.md)
+* [Setup on Raspberry pi](http://lifepluslinux.blogspot.com/2017/03/setting-up-crontab-ui-on-raspberry-pi.html)
 
 ###Adding, deleting, pausing and resuming jobs.
 
