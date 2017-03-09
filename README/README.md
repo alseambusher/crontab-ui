@@ -30,6 +30,13 @@ Also, you may have to **set permissions** for your `node_modules` folder. Refer 
 If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
+    
+## Resources
+
+* [Full usage details](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
+* [Issues](https://github.com/alseambusher/crontab-ui/blob/master/README/issues.md)
+* [Setup Mailing after execution](http://lifepluslinux.blogspot.com/2017/03/introducing-mailing-in-crontab-ui.html)
+* [Integration with nginx and authentication](https://github.com/alseambusher/crontab-ui/blob/master/README/nginx.md)
 
 ###Adding, deleting, pausing and resuming jobs.
 
