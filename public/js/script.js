@@ -67,7 +67,7 @@ function setCrontab(){
 }
 
 function getCrontab(){
-	messageBox("<p> Do you want to get the crontab file? </p>", "Confirm crontab retrieval", null, null, function(){
+	messageBox("<p> Do you want to get the crontab file? <br /> <b style='color:red'>NOTE: It is recommended to take a backup before this.</b> And refresh the page after this.</p>", "Confirm crontab retrieval", null, null, function(){
 		$.get(routes.import_crontab, { "env_vars": $("#env_vars").val() }, function(){
 			// TODO show only if success
 			infoMessageBox("Successfuly got the crontab file!","Information");
@@ -183,7 +183,7 @@ function setMailConfig(a){
 	let data = JSON.parse(a.getAttribute("data-json"));
 	let container = document.createElement("div");
 
-	let message = "<p>This is based on nodemailer. Refer <a href='https://github.com/alseambusher/crontab-ui/tree/master/README/mail.md'>this</a> for more details.</p>";
+	let message = "<p>This is based on nodemailer. Refer <a href='http://lifepluslinux.blogspot.com/2017/03/introducing-mailing-in-crontab-ui.html'>this</a> for more details.</p>";
 	container.innerHTML += message;
 
 	let transporterLabel = document.createElement("label");

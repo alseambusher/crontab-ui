@@ -175,7 +175,8 @@ exports.import_crontab = function(){
 		var namePrefix = new Date().getTime();
 
 		lines.forEach(function(line, index){
-			var regex = /^((\@[a-zA-Z]+\s)|(([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s([^\s]+)\s))/;
+			line = line.replace(/\t+/g, ' ');
+			var regex = /^((\@[a-zA-Z]+\s+)|(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+))/;
 			var command = line.replace(regex, '').trim();
 			var schedule = line.replace(command, '').trim();
 
