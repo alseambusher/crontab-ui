@@ -187,6 +187,16 @@ app.use(function(err, req, res, next) {
 	res.status(statusCode).json(data);
 });
 
+process.on('SIGINT', function() {
+  console.log("Exiting crontab-ui");
+  process.exit();
+})
+
+process.on('SIGTERM', function() {
+  console.log("Exiting crontab-ui");
+  process.exit();
+})
+
 app.listen(app.get('port'), app.get('host'), function() {
   console.log("Node version:", process.versions.node);
   fs.access(__dirname + "/crontabs/", fs.W_OK, function(err) {
