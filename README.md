@@ -32,6 +32,10 @@ Also, you may have to **set permissions** for your `node_modules` folder. Refer 
 If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
+
+Setting up with docker:
+	
+	docker run -d -p 8000:8000 alseambusher/crontab-ui
     
 ## Resources
 
