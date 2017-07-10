@@ -7,7 +7,10 @@ LABEL description "Crontab-UI docker"
 RUN   apk --no-cache add \
       nodejs \
       wget \
-      curl
+      curl \
+      supervisor
+
+COPY supervisord.conf /etc/supervisord.conf      
 
 RUN   npm install -g crontab-ui
 
@@ -17,4 +20,4 @@ ENV   PORT 8000
 
 EXPOSE $PORT
 
-CMD ["crontab-ui"]
+CMD ["supervisord", "-c", "/etc/supervisord.conf"]
