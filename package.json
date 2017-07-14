@@ -1,6 +1,6 @@
 {
   "name": "crontab-ui",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "description": "Easy and safe way to manage your crontab file",
   "main": "index.js",
   "scripts": {
