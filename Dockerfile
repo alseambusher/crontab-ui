@@ -3,6 +3,8 @@ FROM alpine:3.5
 
 RUN   mkdir /crontab-ui
 
+WORKDIR /crontab-ui
+
 LABEL maintainer "@alseambusher"
 LABEL description "Crontab-UI docker"
 
