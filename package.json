@@ -20,9 +20,9 @@
   "engines": {
     "node": "latest"
   },
-   "bin": {
-     "crontab-ui": "bin/crontab-ui.js",
-     "crontab-ui-mailer": "bin/crontab-ui-mailer.js"
+  "bin": {
+    "crontab-ui": "bin/crontab-ui.js",
+    "crontab-ui-mailer": "bin/crontab-ui-mailer.js"
   },
   "repository": {
     "type": "git",

@@ -106,7 +106,7 @@ exports.set_crontab = function(env_vars, callback){
 				}
 
 				if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
-					crontab_string += "; " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
+					crontab_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
 				}
 
 				crontab_string += "\n";
