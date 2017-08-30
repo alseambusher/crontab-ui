@@ -90,7 +90,7 @@ exports.set_crontab = function(env_vars, callback){
 				if(tab.command[tab.command.length-1] != ";") // add semicolon
 					tab.command +=";";
 
-				crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + stdout + ") 3>&1 1>&2 2>&3 | tee " + stderr;
+				crontab_string += tab.schedule + " ({ " + tab.command + " } | tee -a " + stdout + ") 3>&1 1>&2 2>&3 | tee -a " + stderr;
 
 				if (tab.logging && tab.logging == "true") {
 					crontab_string += "; if test -f " + stderr +
