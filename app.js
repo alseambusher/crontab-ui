@@ -6,7 +6,7 @@ var restore = require("./restore");
 var moment = require('moment');
 
 var path = require('path');
-var mime = require('mime');
+var mime = require('mime-types');
 var fs = require('fs');
 var busboy = require('connect-busboy'); // for file upload
 
