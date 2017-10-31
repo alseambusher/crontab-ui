@@ -130,8 +130,8 @@ exports.set_crontab = function(env_vars, callback){
 						else callback();
 					});
 				} else {
-                    callback();
-                }
+					callback();
+				}
 			});
 		});
 	});
