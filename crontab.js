@@ -129,7 +129,9 @@ exports.set_crontab = function(env_vars, callback){
 						if (err) return callback(err);
 						else callback();
 					});
-				}
+				} else {
+                    callback();
+                }
 			});
 		});
 	});
