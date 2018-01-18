@@ -27,7 +27,7 @@ Get latest `node` from [here](https://nodejs.org/en/download/current/). Then,
     npm install -g crontab-ui
     crontab-ui
 
-If you need to set/use an alternate host, or you need to set/use an alternate port, you may do so by setting an environment variable before starting the process:
+If you need to set/use an alternative host or port, you may do so by setting an environment variable before starting the process:
 
     HOST=0.0.0.0 PORT=9000 crontab-ui
     
