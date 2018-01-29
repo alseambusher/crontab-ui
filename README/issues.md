@@ -3,7 +3,8 @@ Issues
 
 You can submit issues in the [issue tracker](https://github.com/alseambusher/crontab-ui/issues) of the repository.
 
-###Common issues
+Common issues
+-------------
 __crontab-ui is running but is not accessible on browser__ -
 This is usually because the place where your crontab-ui is installed does not give access to others. It can be resolved by either __giving permission__ to the user (Recommended) or running crontab-ui as root. Refer [this](https://github.com/alseambusher/crontab-ui/issues/8)
 
