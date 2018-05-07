@@ -55,6 +55,15 @@ function startJob(_id){
 	});
 }
 
+function runJob(_id){
+	messageBox("<p> Do you want to run this Job? </p>", "Confirm run job", null, null, function(){
+		$.post(routes.run, {_id: _id}, function(){
+			location.reload();
+		});
+		
+	});
+}
+
 function setCrontab(){
 	messageBox("<p> Do you want to set the crontab file? </p>", "Confirm crontab setup", null, null, function(){
 		$.get(routes.crontab, { "env_vars": $("#env_vars").val() }, function(){

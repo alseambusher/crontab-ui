@@ -74,6 +74,15 @@ exports.get_crontab = function(_id, callback) {
 	});
 };
 
+exports.runjob = function(_id, callback) {
+	db.find({_id: _id}).exec(function(err, docs){
+		var res = docs[0];
+		exec(res.command, function(error, stdout, stderr){
+			console.log(stdout);
+		});
+	});
+};
+
 // Set actual crontab file from the db
 exports.set_crontab = function(env_vars, callback){
 	exports.crontabs( function(tabs){

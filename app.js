@@ -87,6 +87,12 @@ app.post(routes.remove, function(req, res) {
 	res.end();
 });
 
+// run a job
+app.post(routes.run, function(req, res) {
+	crontab.runjob(req.body._id);
+	res.end();
+});
+
 // set crontab. Needs env_vars to be passed
 app.get(routes.crontab, function(req, res, next) {
 	crontab.set_crontab(req.query.env_vars, function(err) {
