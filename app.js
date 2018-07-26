@@ -207,7 +207,7 @@ app.listen(app.get('port'), app.get('host'), function() {
   console.log("Node version:", process.versions.node);
   fs.access(__dirname + "/crontabs/", fs.W_OK, function(err) {
     if(err){
-      console.error("Write access to", __dirname + "/crontabs/", "DENIED.");
+      console.error("Write access to", __dirname + "/crontabs/", "DENIED. \nTry running with root permissions.");
       process.exit(1);
     }
   });
