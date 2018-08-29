@@ -133,14 +133,14 @@ exports.set_crontab = function(env_vars, callback){
 				if (err) return callback(err);
 				/// In docker we're running crond using busybox implementation of crond
 				/// It is launched as part of the container startup process, so no need to run it again
-				if(process.env.CRON_IN_DOCKER === undefined) {
+// 				if(process.env.CRON_IN_DOCKER === undefined) {
 					exec("crontab " + path.join(cronPath, "crontab"), function(err) {
 						if (err) return callback(err);
 						else callback();
 					});
-				} else {
-					callback();
-				}
+// 				} else {
+// 					callback();
+// 				}
 			});
 		});
 	});
