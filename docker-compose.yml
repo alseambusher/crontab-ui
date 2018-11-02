@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  crontab-ui:
+    build: .
+    image: alseambusher/crontab-ui
+    network_mode: bridge
+    ports:
+      - 8000:8000
