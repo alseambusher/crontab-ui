@@ -10,7 +10,8 @@
 	<label>Name (Optional)</label>
 	<input type='text' class='form-control' id='job-name'/><br />
 	<label>Command</label>
-	<input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();"/><br />
+  <input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();" 
+  onpaste="const elem = $(this); setTimeout(function () {elem.keyup();}, 100);"/><br />
 	<label>Quick Schedule</label><br />
 	<a class="btn btn-primary" onclick="schedule = '@reboot'; job_string();">Startup</a>
 	<a class="btn btn-primary" onclick="schedule = '@hourly'; job_string();">Hourly</a>
