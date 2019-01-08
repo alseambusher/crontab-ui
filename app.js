@@ -4,6 +4,9 @@ var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
 var moment = require('moment');
+var auth = require('./auth');
+
+app.use(auth);
 
 var path = require('path');
 var mime = require('mime-types');

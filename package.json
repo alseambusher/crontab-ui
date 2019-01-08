@@ -7,14 +7,16 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "latest",
-    "ejs": "latest",
-    "nedb": "latest",
     "body-parser": "latest",
-    "mime-types": "latest",
-    "cron-parser": "latest",
     "connect-busboy": "latest",
+    "cron-parser": "latest",
+    "ejs": "latest",
+    "express": "latest",
+    "express-basic-auth": "^1.1.6",
+    "basic-auth": "^2.0.1",
+    "mime-types": "latest",
     "moment": "latest",
+    "nedb": "latest",
     "nodemailer": "latest"
   },
   "engines": {
