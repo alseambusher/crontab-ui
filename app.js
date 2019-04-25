@@ -4,11 +4,29 @@ var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
 var moment = require('moment');
+var basicAuth = require('express-basic-auth');
 
 var path = require('path');
 var mime = require('mime-types');
 var fs = require('fs');
 var busboy = require('connect-busboy'); // for file upload
+
+// basic auth
+var BASIC_AUTH_USER = process.env.BASIC_AUTH_USER;
+var BASIC_AUTH_PWD = process.env.BASIC_AUTH_PWD;
+
+if (BASIC_AUTH_USER && BASIC_AUTH_PWD) {
+    app.use(function(req, res, next) {
+        res.setHeader('WWW-Authenticate', 'Basic realm="Restricted Area"')
+        next();
+    });
+
+	app.use(basicAuth({
+        users: {
+            [BASIC_AUTH_USER]: BASIC_AUTH_PWD
+        }
+    }))
+}
 
 // include the routes
 var routes = require("./routes").routes;
