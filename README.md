@@ -31,6 +31,10 @@ If you need to set/use an alternative host or port, you may do so by setting an 
 
     HOST=0.0.0.0 PORT=9000 crontab-ui
     
+If you need to apply basic HTTP authentication, you can set user name and password through environment variables:
+
+    BASIC_AUTH_USER=user BASIC_AUTH_PWD=SecretPassword
+    
 Also, you may have to **set permissions** for your `node_modules` folder. Refer [this](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
 If you need to autosave your changes to crontab directly:
