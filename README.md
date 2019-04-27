@@ -2,9 +2,10 @@ Crontab UI
 ==========
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U8328Q7VFZMTS)
+[![npm](https://img.shields.io/npm/v/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dt/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dm/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
-[![npm](https://img.shields.io/npm/v/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
+[![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
 Editing the plain text crontab is error prone for managing jobs, e.g., adding jobs, deleting jobs, or pausing jobs. A small mistake can easily bring down all the jobs and might cost you a lot of time. With Crontab UI, it is very easy to manage crontab. Here are the key features of Crontab UI.
