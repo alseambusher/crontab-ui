@@ -42,7 +42,7 @@ If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
 
-Setting up with docker:
+Setting up with docker. You can use the prebuilt images in the [dockerhub](https://hub.docker.com/r/alseambusher/crontab-ui/tags) or build it yourself like this:
 
 ```bash
 git clone https://github.com/alseambusher/crontab-ui.git
