@@ -13,8 +13,8 @@ if(process.env.CRON_PATH !== undefined) {
 db.loadDatabase(function (err) {
 	if (err) throw err; // no hope, just terminate
 });
-
-var exec = require('child_process').exec;
+var childProcess = require('child_process');
+var exec = childProcess.exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
 
@@ -76,10 +76,10 @@ exports.get_crontab = function(_id, callback) {
 
 exports.runjob = function(_id, callback) {
 	db.find({_id: _id}).exec(function(err, docs){
-		var res = docs[0];
-		exec(res.command, function(error, stdout, stderr){
-			console.log(stdout);
-		});
+        var res = docs[0];
+        var output = fs.openSync(path.join(exports.log_folder, _id + ".log"), 'w');
+        var output2 = fs.openSync(path.join(exports.log_folder, _id + ".log"), 'a');
+        childProcess.spawn('sh', ['-c', res.command], {stdio: ['ignore', output, output2]});
 	});
 };
 
