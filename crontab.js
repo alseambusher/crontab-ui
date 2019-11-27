@@ -103,8 +103,8 @@ exports.set_crontab = function(env_vars, callback){
 
 				if (tab.logging && tab.logging == "true") {
 					crontab_string += "; if test -f " + stderr +
-					"; then date >> " + log_file +
-					"; cat " + stderr + " >> " + log_file +
+					"; then date >> \"" + log_file + "\"" +
+					"; cat " + stderr + " >> \"" + log_file + "\"" +
 					"; fi";
 				}
 
