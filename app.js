@@ -184,13 +184,23 @@ app.get(routes.import_crontab, function(req, res) {
 	res.end();
 });
 
-// get the log file a given job. id passed as query param
-app.get(routes.logger, function(req, res) {
-	_file = crontab.log_folder +"/"+req.query.id+".log";
-	if (fs.existsSync(_file))
-		res.sendFile(_file);
+function sendLog(path, req, res) {
+	if (fs.existsSync(path))
+		res.sendFile(path);
 	else
 		res.end("No errors logged yet");
+}
+
+// get the log file a given job. id passed as query param
+app.get(routes.logger, function(req, res) {
+	let _file = crontab.log_folder + "/" + req.query.id + ".log";
+	sendLog(_file, req, res);
+});
+
+// get the log file a given job. id passed as query param
+app.get(routes.stdout, function(req, res) {
+	let _file = crontab.log_folder + "/" + req.query.id + ".stdout.log";
+	sendLog(_file, req, res);
 });
 
 // error handler

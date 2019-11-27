@@ -95,6 +95,7 @@ exports.set_crontab = function(env_vars, callback){
 				let stderr = path.join(cronPath, tab._id + ".stderr");
 				let stdout = path.join(cronPath, tab._id + ".stdout");
 				let log_file = path.join(exports.log_folder, tab._id + ".log");
+				let log_file_stdout = path.join(exports.log_folder, tab._id + ".stdout.log");
 
 				if(tab.command[tab.command.length-1] != ";") // add semicolon
 					tab.command +=";";
@@ -105,6 +106,11 @@ exports.set_crontab = function(env_vars, callback){
 					crontab_string += "; if test -f " + stderr +
 					"; then date >> \"" + log_file + "\"" +
 					"; cat " + stderr + " >> \"" + log_file + "\"" +
+					"; fi";
+					
+					crontab_string += "; if test -f " + stdout +
+					"; then date >> \"" + log_file_stdout + "\"" +
+					"; cat " + stdout + " >> \"" + log_file_stdout + "\"" +
 					"; fi";
 				}
 
