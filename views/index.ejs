@@ -21,7 +21,7 @@
 </script>
 </head>
 <body>
-<% include navbar %>
+<%- include('navbar.ejs') -%>
 <div class="container">
 	<h2>Cronjobs</h2>
 	<div class="form-group">
@@ -99,7 +99,7 @@
 </tbody>
 	</table>
 </div>
-<% include popup.ejs %>
+<%- include('popup.ejs') -%>
 <script>
    jQuery(function($) {
    	$('#main_table').DataTable({
