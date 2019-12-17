@@ -28,16 +28,16 @@
 		<label for="env_vars">Environment Variables:</label>
 		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
 	</div>
-	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
-	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
+	<a class="btn btn-primary disabled" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
+	<a class="btn btn-info disabled" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
 	<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
 		<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
 	</form>
-	<a class="btn btn-warning" onclick="import_db()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import</a>
-	<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
+	<a class="btn btn-warning disabled" onclick="import_db()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import</a>
+	<a class="btn btn-warning disabled" href="<%= JSON.parse(routes).export %>"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
 	<!--<a class="btn btn-info" onclick="import_crontab()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>-->
 	<a class="btn btn-success" onclick="getCrontab();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span> Get from crontab</a>
-	<a class="btn btn-success" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
+	<a class="btn btn-success disabled" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
 	<br/>
 	<br/>
 
@@ -91,7 +91,7 @@
 		<% } else { %>
 					<a class="btn btn-info" onclick="startJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Start</a>
 		<% } %>
-					<a class="btn btn-danger" onclick="deleteJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					<a class="btn btn-danger disabled" onclick="deleteJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
 				</td>
 			</tr>
 	<% }); %>
