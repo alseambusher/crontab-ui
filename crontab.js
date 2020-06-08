@@ -131,22 +131,16 @@ exports.set_crontab = function(env_vars, callback){
 		fs.writeFile(exports.env_file, env_vars, function(err) {
 			if (err) callback(err);
 			// In docker we're running as the root user, so we need to write the file as root and not crontab
-			var fileName = "crontab"
-			if(process.env.CRON_IN_DOCKER !== undefined) {
-				fileName = "root"
-			}
+			var fileName = process.env.CRON_IN_DOCKER !== undefined  ? "root" : "crontab";
 			fs.writeFile(path.join(cronPath, fileName), crontab_string, function(err) {
 				if (err) return callback(err);
-				/// In docker we're running crond using busybox implementation of crond
-				/// It is launched as part of the container startup process, so no need to run it again
-				if(process.env.CRON_IN_DOCKER === undefined) {
-					exec("crontab " + path.join(cronPath, "crontab"), function(err) {
-						if (err) return callback(err);
-						else callback();
-					});
-				} else {
-					callback();
-				}
+				exec("crontab " + path.join(cronPath, fileName), function(err) {
+					if (err) {
+						console.error(err);
+						return callback(err);
+					}
+					else callback();
+				});
 			});
 		});
 	});
