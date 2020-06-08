@@ -62,7 +62,12 @@ exports.crontabs = function(callback){
 			if(docs[i].schedule == "@reboot")
 				docs[i].next = "Next Reboot";
 			else
-				docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+				try {
+					docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+				} catch(err) {
+					console.error(err);
+					docs[i].next = "invalid";
+				}
 		}
 		callback(docs);
 	});
@@ -129,11 +134,18 @@ exports.set_crontab = function(env_vars, callback){
 		});
 
 		fs.writeFile(exports.env_file, env_vars, function(err) {
-			if (err) callback(err);
+			if (err) {
+				console.error(err);
+				callback(err);
+			}
 			// In docker we're running as the root user, so we need to write the file as root and not crontab
 			var fileName = process.env.CRON_IN_DOCKER !== undefined  ? "root" : "crontab";
 			fs.writeFile(path.join(cronPath, fileName), crontab_string, function(err) {
-				if (err) return callback(err);
+				if (err) {
+					console.error(err);
+					return callback(err);
+				}
+
 				exec("crontab " + path.join(cronPath, fileName), function(err) {
 					if (err) {
 						console.error(err);

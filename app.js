@@ -215,7 +215,7 @@ app.use(function(err, req, res, next) {
 		data.stack = err.stack;
 	}
 
-	if (parseInt(data.statusCode) >= 500) {
+	if (statusCode >= 500) {
 		console.error(err);
 	}
 
