@@ -14,5 +14,12 @@ exports.crontabs = function(db_name, callback){
 };
 
 exports.delete = function(db_name){
-	fs.unlink(__dirname + '/crontabs/' + db_name);
+	fs.unlink(__dirname + '/crontabs/' + db_name, function(err){
+		if(err) {
+			return console.log("Delete error: " + err);
+		}
+		else{
+			console.log("Backup deleted");
+		}
+	});
 };
