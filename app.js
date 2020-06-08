@@ -30,6 +30,7 @@ if (BASIC_AUTH_USER && BASIC_AUTH_PWD) {
 
 // include the routes
 var routes = require("./routes").routes;
+var routes_relative = require("./routes").relative
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -61,7 +62,7 @@ app.get(routes.root, function(req, res) {
 	// send all the required parameters
 	crontab.crontabs( function(docs){
 		res.render('index', {
-			routes : JSON.stringify(routes),
+			routes : JSON.stringify(routes_relative),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
 			env : crontab.get_env(),
@@ -130,7 +131,7 @@ app.get(routes.restore, function(req, res) {
 	// get all the crontabs
 	restore.crontabs(req.query.db, function(docs){
 		res.render('restore', {
-			routes : JSON.stringify(routes),
+			routes : JSON.stringify(routes_relative),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
 			db: req.query.db

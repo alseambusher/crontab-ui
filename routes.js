@@ -16,3 +16,6 @@ exports.routes = {
 	"logger": "/logger",
 	"stdout": "/stdout",
 };
+
+exports.relative = Object.keys(exports.routes).reduce((p, c) => ({...p, [c]: exports.routes[c].replace(/^\//, '')}), {});
+exports.relative["root"] = ".";
