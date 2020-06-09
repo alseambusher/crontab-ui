@@ -234,9 +234,9 @@ process.on('SIGTERM', function() {
 
 app.listen(app.get('port'), app.get('host'), function() {
   console.log("Node version:", process.versions.node);
-  fs.access(__dirname + "/crontabs/", fs.W_OK, function(err) {
+  fs.access(crontab.db_folder, fs.W_OK, function(err) {
     if(err){
-      console.error("Write access to", __dirname + "/crontabs/", "DENIED.");
+      console.error("Write access to", crontab.db_folder, "DENIED.");
       process.exit(1);
     }
   });

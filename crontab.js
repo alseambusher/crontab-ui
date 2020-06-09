@@ -45,11 +45,14 @@ crontab = function(name, command, schedule, stopped, logging, mailing){
 exports.create_new = function(name, command, schedule, logging, mailing){
 	var tab = crontab(name, command, schedule, false, logging, mailing);
 	tab.created = new Date().valueOf();
+	tab.saved = false;
 	db.insert(tab);
 };
 
 exports.update = function(data){
-	db.update({_id: data._id}, crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing));
+	var tab = crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing);
+	tab.saved = false;
+	db.update({_id: data._id}, tab);
 };
 
 exports.status = function(_id, stopped){
@@ -156,7 +159,10 @@ exports.set_crontab = function(env_vars, callback){
 						console.error(err);
 						return callback(err);
 					}
-					else callback();
+					else {
+						db.update({},{$set: {saved: true}}, {multi: true});
+						callback();
+					}
 				});
 			});
 		});
