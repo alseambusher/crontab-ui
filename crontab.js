@@ -56,7 +56,7 @@ exports.update = function(data){
 };
 
 exports.status = function(_id, stopped){
-	db.update({_id: _id},{$set: {stopped: stopped}});
+	db.update({_id: _id},{$set: {stopped: stopped, saved: false}});
 };
 
 exports.remove = function(_id){
