@@ -42,13 +42,29 @@ If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
 
-Setting up with docker. You can use the prebuilt images in the [dockerhub](https://hub.docker.com/r/alseambusher/crontab-ui/tags) or build it yourself like this:
+## Docker
+You can use crontab-ui with docker. You can use the prebuilt images in the [dockerhub](https://hub.docker.com/r/alseambusher/crontab-ui/tags)
+```bash
+docker run -d -p 8000:8000 alseambusher/crontab-ui
+```
 
+You can also build it yourself if you want to customize, like this:
 ```bash
 git clone https://github.com/alseambusher/crontab-ui.git
 cd crontab-ui
 docker build -t alseambusher/crontab-ui .
 docker run -d -p 8000:8000 alseambusher/crontab-ui
+```
+
+If you want to use it with authentication, You can pass `BASIC_AUTH_USER` and `BASIC_AUTH_PWD` as env variables
+```bash
+docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=SecretPassword -d -p 8000:8000 alseambusher/crontab-ui 
+```
+
+You can also mount a folder to store the db and logs.
+```bash
+mkdir -p crontabs/logs
+docker run --mount type=bind,source="$(pwd)"/crontabs/,target=/crontab-ui/crontabs/ -d -p 8000:8000 alseambusher/crontab-ui
 ```
     
 ## Resources

@@ -30,6 +30,7 @@ if (BASIC_AUTH_USER && BASIC_AUTH_PWD) {
 
 // include the routes
 var routes = require("./routes").routes;
+var routes_relative = require("./routes").relative
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
@@ -61,7 +62,7 @@ app.get(routes.root, function(req, res) {
 	// send all the required parameters
 	crontab.crontabs( function(docs){
 		res.render('index', {
-			routes : JSON.stringify(routes),
+			routes : JSON.stringify(routes_relative),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
 			env : crontab.get_env(),
@@ -130,7 +131,7 @@ app.get(routes.restore, function(req, res) {
 	// get all the crontabs
 	restore.crontabs(req.query.db, function(docs){
 		res.render('restore', {
-			routes : JSON.stringify(routes),
+			routes : JSON.stringify(routes_relative),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
 			db: req.query.db
@@ -152,7 +153,7 @@ app.get(routes.restore_backup, function(req, res) {
 
 // export current crontab db so that user can download it
 app.get(routes.export, function(req, res) {
-	var file = __dirname + '/crontabs/crontab.db';
+	var file = crontab.crontab_db_file;
 
 	var filename = path.basename(file);
 	var mimetype = mime.lookup(file);
@@ -169,7 +170,7 @@ app.post(routes.import, function(req, res) {
 	var fstream;
 	req.pipe(req.busboy);
 	req.busboy.on('file', function (fieldname, file, filename) {
-		fstream = fs.createWriteStream(__dirname + '/crontabs/crontab.db');
+		fstream = fs.createWriteStream(crontab.crontab_db_file);
 		file.pipe(fstream);
 		fstream.on('close', function () {
 			crontab.reload_db();
@@ -184,13 +185,23 @@ app.get(routes.import_crontab, function(req, res) {
 	res.end();
 });
 
-// get the log file a given job. id passed as query param
-app.get(routes.logger, function(req, res) {
-	_file = crontab.log_folder +"/"+req.query.id+".log";
-	if (fs.existsSync(_file))
-		res.sendFile(_file);
+function sendLog(path, req, res) {
+	if (fs.existsSync(path))
+		res.sendFile(path);
 	else
 		res.end("No errors logged yet");
+}
+
+// get the log file a given job. id passed as query param
+app.get(routes.logger, function(req, res) {
+	let _file = crontab.log_folder + "/" + req.query.id + ".log";
+	sendLog(_file, req, res);
+});
+
+// get the log file a given job. id passed as query param
+app.get(routes.stdout, function(req, res) {
+	let _file = crontab.log_folder + "/" + req.query.id + ".stdout.log";
+	sendLog(_file, req, res);
 });
 
 // error handler
@@ -204,7 +215,7 @@ app.use(function(err, req, res, next) {
 		data.stack = err.stack;
 	}
 
-	if (parseInt(data.statusCode) >= 500) {
+	if (statusCode >= 500) {
 		console.error(err);
 	}
 
@@ -233,7 +244,7 @@ app.listen(app.get('port'), app.get('host'), function() {
   // we do this by watching log file and setting a on change hook to it
   if (process.argv.includes("--autosave")){
     crontab.autosave_crontab(()=>{});
-    fs.watchFile(__dirname + '/crontabs/crontab.db', () => {
+    fs.watchFile(crontab.crontab_db_file, () => {
       crontab.autosave_crontab(()=>{
         console.log("Attempted to autosave crontab");
       });
@@ -241,8 +252,8 @@ app.listen(app.get('port'), app.get('host'), function() {
   }
   if (process.argv.includes("--reset")){
     console.log("Resetting crontab-ui");
-    var crontabdb = __dirname + "/crontabs/crontab.db";
-    var envdb = __dirname + "/crontabs/env.db";
+    var crontabdb = crontab.crontab_db_file;
+    var envdb = crontab.env_file;
 
     console.log("Deleting " + crontabdb);
     try{

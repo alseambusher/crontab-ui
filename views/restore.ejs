@@ -17,7 +17,7 @@
 </script>
 </head>
 <body>
-<% include navbar %>
+<%- include('navbar.ejs') -%>
 <div class="container">
 	<h2><%= db %></h2>
 	<table class="table">
@@ -60,6 +60,6 @@
 	<a class="btn btn-primary" onclick="restore_backup('<%= db %>')"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Restore</a>
 	<a class="btn btn-danger" onclick="delete_backup('<%= db %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
 </div>
-<% include popup.ejs %>
+<%- include('popup.ejs') -%>
 </body>
 </html>

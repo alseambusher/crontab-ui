@@ -21,7 +21,7 @@
 </script>
 </head>
 <body>
-<% include navbar %>
+<%- include('navbar.ejs') -%>
 <div class="container-fluid">
 	<h2>Cronjobs</h2>
 	<div class="form-group">
@@ -82,7 +82,8 @@
 		<!-- controls based on crontab state -->
 		<% if (!crontab.stopped) { %>
 			<% if (crontab.logging && crontab.logging != "false") {%>
-					<a class="btn btn-primary" data-toggle="tooltip" data-placement="left" title="See Log" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+					<a class="btn btn-primary btn-danger" data-toggle="tooltip" data-placement="left" title="stderr" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+					<a class="btn btn-primary" data-toggle="tooltip" data-placement="left" title="stdout" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
 			<% } %>
 					<a class="btn btn-info" onclick="runJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run</a>
 					<a class="btn btn-primary" onclick="editJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
@@ -99,7 +100,7 @@
 </tbody>
 	</table>
 </div>
-<% include popup.ejs %>
+<%- include('popup.ejs') -%>
 <script>
    jQuery(function($) {
    	$('#main_table').DataTable({

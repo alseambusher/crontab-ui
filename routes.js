@@ -14,4 +14,8 @@ exports.routes = {
 	"import": "/import", // this is import from database
 	"import_crontab": "/import_crontab", // this is from existing crontab
 	"logger": "/logger",
+	"stdout": "/stdout",
 };
+
+exports.relative = Object.keys(exports.routes).reduce((p, c) => ({...p, [c]: exports.routes[c].replace(/^\//, '')}), {});
+exports.relative["root"] = ".";

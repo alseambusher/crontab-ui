@@ -2,7 +2,14 @@
 //load database
 var Datastore = require('nedb');
 var path = require("path");
-var db = new Datastore({ filename: __dirname + '/crontabs/crontab.db' });
+
+exports.db_folder = process.env.CRON_DB_PATH === undefined ? path.join(__dirname,  "crontabs") : process.env.CRON_DB_PATH;
+console.log("Cron db path: " + exports.db_folder);
+exports.log_folder = path.join(exports.db_folder, 'logs');
+exports.env_file =  path.join(exports.db_folder, 'env.db');
+exports.crontab_db_file = path.join(exports.db_folder, 'crontab.db');
+
+var db = new Datastore({ filename: exports.crontab_db_file});
 var cronPath = "/tmp";
 
 if(process.env.CRON_PATH !== undefined) {
@@ -18,8 +25,6 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
 
-exports.log_folder = __dirname + '/crontabs/logs';
-exports.env_file = __dirname + '/crontabs/env.db';
 
 crontab = function(name, command, schedule, stopped, logging, mailing){
 	var data = {};
@@ -62,7 +67,12 @@ exports.crontabs = function(callback){
 			if(docs[i].schedule == "@reboot")
 				docs[i].next = "Next Reboot";
 			else
-				docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+				try {
+					docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+				} catch(err) {
+					console.error(err);
+					docs[i].next = "invalid";
+				}
 		}
 		callback(docs);
 	});
@@ -95,6 +105,7 @@ exports.set_crontab = function(env_vars, callback){
 				let stderr = path.join(cronPath, tab._id + ".stderr");
 				let stdout = path.join(cronPath, tab._id + ".stdout");
 				let log_file = path.join(exports.log_folder, tab._id + ".log");
+				let log_file_stdout = path.join(exports.log_folder, tab._id + ".stdout.log");
 
 				if(tab.command[tab.command.length-1] != ";") // add semicolon
 					tab.command +=";";
@@ -103,8 +114,13 @@ exports.set_crontab = function(env_vars, callback){
 
 				if (tab.logging && tab.logging == "true") {
 					crontab_string += "; if test -f " + stderr +
-					"; then date >> " + log_file +
-					"; cat " + stderr + " >> " + log_file +
+					"; then date >> \"" + log_file + "\"" +
+					"; cat " + stderr + " >> \"" + log_file + "\"" +
+					"; fi";
+					
+					crontab_string += "; if test -f " + stdout +
+					"; then date >> \"" + log_file_stdout + "\"" +
+					"; cat " + stdout + " >> \"" + log_file_stdout + "\"" +
 					"; fi";
 				}
 
@@ -123,24 +139,25 @@ exports.set_crontab = function(env_vars, callback){
 		});
 
 		fs.writeFile(exports.env_file, env_vars, function(err) {
-			if (err) callback(err);
-			// In docker we're running as the root user, so we need to write the file as root and not crontab
-			var fileName = "crontab"
-			if(process.env.CRON_IN_DOCKER !== undefined) {
-				fileName = "root"
+			if (err) {
+				console.error(err);
+				callback(err);
 			}
+			// In docker we're running as the root user, so we need to write the file as root and not crontab
+			var fileName = process.env.CRON_IN_DOCKER !== undefined  ? "root" : "crontab";
 			fs.writeFile(path.join(cronPath, fileName), crontab_string, function(err) {
-				if (err) return callback(err);
-				/// In docker we're running crond using busybox implementation of crond
-				/// It is launched as part of the container startup process, so no need to run it again
-				if(process.env.CRON_IN_DOCKER === undefined) {
-					exec("crontab " + path.join(cronPath, "crontab"), function(err) {
-						if (err) return callback(err);
-						else callback();
-					});
-				} else {
-					callback();
+				if (err) {
+					console.error(err);
+					return callback(err);
 				}
+
+				exec("crontab " + path.join(cronPath, fileName), function(err) {
+					if (err) {
+						console.error(err);
+						return callback(err);
+					}
+					else callback();
+				});
 			});
 		});
 	});
@@ -148,7 +165,7 @@ exports.set_crontab = function(env_vars, callback){
 
 exports.get_backup_names = function(){
 	var backups = [];
-	fs.readdirSync(__dirname + '/crontabs').forEach(function(file){
+	fs.readdirSync(exports.db_folder).forEach(function(file){
 		// file name begins with backup
 		if(file.indexOf("backup") === 0){
 			backups.push(file);
@@ -175,11 +192,11 @@ exports.get_backup_names = function(){
 
 exports.backup = function(){
 	//TODO check if it failed
-	fs.createReadStream( __dirname + '/crontabs/crontab.db').pipe(fs.createWriteStream( __dirname + '/crontabs/backup ' + (new Date()).toString().replace("+", " ") + '.db'));
+	fs.createReadStream(exports.crontab_db_file).pipe(fs.createWriteStream( path.join(exports.db_folder, 'backup ' + (new Date()).toString().replace("+", " ") + '.db')));
 };
 
 exports.restore = function(db_name){
-	fs.createReadStream( __dirname + '/crontabs/' + db_name).pipe(fs.createWriteStream( __dirname + '/crontabs/crontab.db'));
+	fs.createReadStream(path.join(exports.db_folder, db_name)).pipe(fs.createWriteStream(exports.crontab_db_file));
 	db.loadDatabase(); // reload the database
 };
 
