@@ -22,5 +22,11 @@ server {
 Authentication
 ==============
 
-You can enable basic http authentication with user name and password on nginx to prevent unauthorized users from accessing your cronjobs. Refer [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10).
+If you need to apply basic HTTP authentication, you can set user name and password through environment variables:
+
+```
+BASIC_AUTH_USER=user BASIC_AUTH_PWD=SecretPassword
+```
+
+You can also enable basic http authentication with user name and password on nginx to prevent unauthorized users from accessing your cronjobs. Refer [this](https://www.digitalocean.com/community/tutorials/how-to-set-up-http-authentication-with-nginx-on-ubuntu-12-10).
 

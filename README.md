@@ -2,9 +2,10 @@ Crontab UI
 ==========
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=U8328Q7VFZMTS)
+[![npm](https://img.shields.io/npm/v/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dt/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dm/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
-[![npm](https://img.shields.io/npm/v/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
+[![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
 Editing the plain text crontab is error prone for managing jobs, e.g., adding jobs, deleting jobs, or pausing jobs. A small mistake can easily bring down all the jobs and might cost you a lot of time. With Crontab UI, it is very easy to manage crontab. Here are the key features of Crontab UI.
@@ -31,19 +32,39 @@ If you need to set/use an alternative host or port, you may do so by setting an 
 
     HOST=0.0.0.0 PORT=9000 crontab-ui
     
+If you need to apply basic HTTP authentication, you can set user name and password through environment variables:
+
+    BASIC_AUTH_USER=user BASIC_AUTH_PWD=SecretPassword
+    
 Also, you may have to **set permissions** for your `node_modules` folder. Refer [this](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
 If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
 
-Setting up with docker:
+## Docker
+You can use crontab-ui with docker. You can use the prebuilt images in the [dockerhub](https://hub.docker.com/r/alseambusher/crontab-ui/tags)
+```bash
+docker run -d -p 8000:8000 alseambusher/crontab-ui
+```
 
+You can also build it yourself if you want to customize, like this:
 ```bash
 git clone https://github.com/alseambusher/crontab-ui.git
 cd crontab-ui
 docker build -t alseambusher/crontab-ui .
 docker run -d -p 8000:8000 alseambusher/crontab-ui
+```
+
+If you want to use it with authentication, You can pass `BASIC_AUTH_USER` and `BASIC_AUTH_PWD` as env variables
+```bash
+docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=SecretPassword -d -p 8000:8000 alseambusher/crontab-ui 
+```
+
+You can also mount a folder to store the db and logs.
+```bash
+mkdir -p crontabs/logs
+docker run --mount type=bind,source="$(pwd)"/crontabs/,target=/crontab-ui/crontabs/ -d -p 8000:8000 alseambusher/crontab-ui
 ```
     
 ## Resources

@@ -69,6 +69,7 @@ function setCrontab(){
 		$.get(routes.crontab, { "env_vars": $("#env_vars").val() }, function(){
 			// TODO show only if success
 			infoMessageBox("Successfuly set crontab file!","Information");
+			location.reload();
 		}).fail(function(response) {
 			errorMessageBox(response.statusText,"Error");
 		});
