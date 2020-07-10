@@ -31,6 +31,10 @@ Get latest `node` from [here](https://nodejs.org/en/download/current/). Then,
 If you need to set/use an alternative host or port, you may do so by setting an environment variable before starting the process:
 
     HOST=0.0.0.0 PORT=9000 crontab-ui
+
+By default, db, backups and logs are stored in the installation directory. It is **recommended** that it be overriden using env variable `CRON_DB_PATH`. This is particularly helpful in case you **update** crontab-ui.
+
+    CRON_DB_PATH=/path/to/folder crontab-ui
     
 If you need to apply basic HTTP authentication, you can set user name and password through environment variables:
 
@@ -66,6 +70,7 @@ You can also mount a folder to store the db and logs.
 mkdir -p crontabs/logs
 docker run --mount type=bind,source="$(pwd)"/crontabs/,target=/crontab-ui/crontabs/ -d -p 8000:8000 alseambusher/crontab-ui
 ```
+
     
 ## Resources
 
