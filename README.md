@@ -19,7 +19,7 @@ Editing the plain text crontab is error prone for managing jobs, e.g., adding jo
 5. Error log support.
 6. Mailing and hooks support.
 
-Read [this](http://lifepluslinux.blogspot.in/2015/06/crontab-ui-easy-and-safe-way-to-manage.html) to see more details.
+Read [this](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html) to see more details.
 
 ## Setup
 
