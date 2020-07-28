@@ -2,6 +2,7 @@
 FROM alpine:3.10
 
 ENV   CRON_PATH /etc/crontabs
+ENV   BASE_URL /
 
 RUN   mkdir /crontab-ui; touch $CRON_PATH/root; chmod +x $CRON_PATH/root
 
@@ -18,9 +19,13 @@ RUN   apk --no-cache add \
       supervisor
 
 COPY supervisord.conf /etc/supervisord.conf
-COPY . /crontab-ui
 
-RUN   npm install
+
+COPY package*.json /crontab-ui/
+
+RUN npm install
+
+COPY . /crontab-ui
 
 ENV   HOST 0.0.0.0
 
