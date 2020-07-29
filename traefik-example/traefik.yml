@@ -1,0 +1,14 @@
+## traefik.yml
+
+# Docker configuration backend
+providers:
+  docker:
+  #  defaultRule: "Host(`{{ trimPrefix `/` .Name }}.docker.localhost`)"
+    endpoint: "unix:///var/run/docker.sock"
+  #  swarmMode: true
+    network: traefik_network
+    exposedbydefault: false
+
+# API and dashboard configuration
+api:
+  insecure: true

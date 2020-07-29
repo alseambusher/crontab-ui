@@ -1,0 +1,43 @@
+version: '3.7'
+networks:
+  traefik_network:
+  
+services:
+  proxy:
+    image: traefik:v2.2
+    container_name: proxy
+    restart: unless-stopped
+    networks:
+      - traefik_network
+    ports:
+      - 88:80 
+      - 8088:8080 
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+    command: 
+      - "--providers.docker" 
+   
+  whoami:
+    image: containous/whoami
+    networks:
+      - traefik_network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=PathPrefix(`/whoami`)
+  
+  crontab-ui:
+    build: ..
+    image: alseambusher/crontab-ui
+    ports:
+      - 8000:8000
+    networks:
+      - traefik_network
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.crontab.rule=PathPrefix(`/crontab`)
+    environment:
+       BASE_URL: /crontab
+       BASIC_AUTH_USER: user
+       BASIC_AUTH_PWD: pass
