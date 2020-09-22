@@ -11,6 +11,10 @@ var mime = require('mime-types');
 var fs = require('fs');
 var busboy = require('connect-busboy'); // for file upload
 
+// base url
+var base_url = require("./routes").base_url
+app.locals.baseURL = base_url
+
 // basic auth
 var BASIC_AUTH_USER = process.env.BASIC_AUTH_USER;
 var BASIC_AUTH_PWD = process.env.BASIC_AUTH_PWD;
@@ -43,10 +47,10 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use(busboy()); // to support file uploads
 
 // include all folders
-app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/public/css'));
-app.use(express.static(__dirname + '/public/js'));
-app.use(express.static(__dirname + '/config'));
+app.use(base_url, express.static(__dirname + '/public'));
+app.use(base_url, express.static(__dirname + '/public/css'));
+app.use(base_url, express.static(__dirname + '/public/js'));
+app.use(base_url, express.static(__dirname + '/config'));
 app.set('views', __dirname + '/views');
 
 // set host to 127.0.0.1 or the value set by environment var HOST
@@ -271,5 +275,5 @@ app.listen(app.get('port'), app.get('host'), function() {
 
     crontab.reload_db();
   }
-	console.log("Crontab UI is running at http://" + app.get('host') + ":" + app.get('port'));
+	console.log("Crontab UI is running at http://" + app.get('host') + ":" + app.get('port') + base_url);
 });
