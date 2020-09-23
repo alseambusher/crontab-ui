@@ -66,7 +66,8 @@ app.get(routes.root, function(req, res) {
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
 			env : crontab.get_env(),
-      moment: moment
+      		moment: moment,
+      		crontab: crontab
 		});
 	});
 });
@@ -122,8 +123,10 @@ app.get(routes.crontab, function(req, res, next) {
 
 // backup crontab db
 app.get(routes.backup, function(req, res) {
-	crontab.backup();
-	res.end();
+	crontab.backup(function(err) {
+		if (err) next(err);
+		else res.end();
+	});
 });
 
 // This renders the restore page similar to backup page
@@ -134,7 +137,8 @@ app.get(routes.restore, function(req, res) {
 			routes : JSON.stringify(routes_relative),
 			crontabs : JSON.stringify(docs),
 			backups : crontab.get_backup_names(),
-			db: req.query.db
+			db: req.query.db,
+			crontab: crontab
 		});
 	});
 });

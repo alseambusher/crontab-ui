@@ -21,7 +21,7 @@
             	<li><a href="#">None</a></li>
 	    <% } else { %>
 	    	<% backups.forEach(function(file){ %>
-            		<li><a href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= file %></a></li>
+            		<li><a href="<%= JSON.parse(routes).restore %>?db=<%= file %>"><%= crontab.backup_display_name(file) %></a></li>
 	    	<% }) %>
 	    <% } %>
           </ul>

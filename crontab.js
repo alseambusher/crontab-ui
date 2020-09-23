@@ -24,7 +24,9 @@ db.loadDatabase(function (err) {
 var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
+var moment = require('moment'); 
 
+const db_file_name_format = "[backup_]YYYY_MM_DD_HH_MM_ss[.db]";
 
 crontab = function(name, command, schedule, stopped, logging, mailing){
 	var data = {};
@@ -169,40 +171,61 @@ exports.set_crontab = function(env_vars, callback){
 	});
 };
 
-exports.get_backup_names = function(){
+exports.get_backup_names = function() {
 	var backups = [];
-	fs.readdirSync(exports.db_folder).forEach(function(file){
+	fs.readdirSync(exports.db_folder).forEach(function(file) {
 		// file name begins with backup
-		if(file.indexOf("backup") === 0){
+		if(exports.backup_name_is_valid(file)) {
 			backups.push(file);
 		}
 	});
 
-	// Sort by date. Newest on top
-	for(var i=0; i<backups.length; i++){
-		var Ti = backups[i].split("backup")[1];
-		Ti = new Date(Ti.substring(0, Ti.length-3)).valueOf();
-		for(var j=0; j<i; j++){
-			var Tj = backups[j].split("backup")[1];
-			Tj = new Date(Tj.substring(0, Tj.length-3)).valueOf();
-			if(Ti > Tj){
-				var temp = backups[i];
-				backups[i] = backups[j];
-				backups[j] = temp;
-			}
-		}
-	}
+	let sortedArray = backups.sort((a, b) => exports.backup_date(b) - exports.backup_date(a));
 
 	return backups;
 };
 
-exports.backup = function(){
-	//TODO check if it failed
-	fs.createReadStream(exports.crontab_db_file).pipe(fs.createWriteStream( path.join(exports.db_folder, 'backup ' + (new Date()).toString().replace("+", " ") + '.db')));
+exports.backup_display_name = function(backup_name) {
+	let date = exports.backup_date(backup_name);
+
+	return "Backup - " + date.toString();
+}
+
+exports.backup_date = function(backup_name) {
+	let moment_date = moment(backup_name, db_file_name_format, true);
+	let date = moment_date.toDate();
+
+	return date;
+}
+exports.backup_name_is_valid = function(backup_name) {
+	let moment_date = moment(backup_name, db_file_name_format, true);
+
+	return moment_date.isValid();
+}
+
+exports.backup_name = function(date) {
+	let moment_date = moment(date);
+	let name = moment_date.format(db_file_name_format);
+
+	return name;
+}
+
+exports.backup = function(callback) {
+	let backup_file_name = exports.backup_name(new Date());
+	let backup_path = path.join(exports.db_folder, backup_file_name);
+
+	fs.copyFile(exports.crontab_db_file, backup_path, (err) => {
+		if (err) {
+			console.error(err);
+			return callback(err);
+		}
+		callback();
+	});
 };
 
 exports.restore = function(db_name){
-	fs.createReadStream(path.join(exports.db_folder, db_name)).pipe(fs.createWriteStream(exports.crontab_db_file));
+	var backup_path = path.join(exports.db_folder, db_name)
+	fs.createReadStream(backup_path).pipe(fs.createWriteStream(exports.crontab_db_file));
 	db.loadDatabase(); // reload the database
 };
 
