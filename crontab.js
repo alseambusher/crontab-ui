@@ -87,56 +87,104 @@ exports.get_crontab = function(_id, callback) {
 	});
 };
 
-exports.runjob = function(_id, callback) {
+exports.runjob = function(_id) {
 	db.find({_id: _id}).exec(function(err, docs){
-		var res = docs[0];
-		exec(res.command, function(error, stdout, stderr){
-			console.log(stdout);
+		let res = docs[0];
+
+		let env_vars = exports.get_env()
+
+		var crontab_job_string_command = crontabCommand_noEnvVars(res)
+
+		crontab_job_string_command = addEnvironmentVariablesToCommand(env_vars, crontab_job_string_command)
+
+		console.log("Running job")
+		console.log("ID: " + _id)		
+		console.log("Original command: " + res.command)
+		console.log("Executed command: " + crontab_job_string_command)
+
+		exec(crontab_job_string_command, function(error, stdout, stderr){
+			if (error) {
+				console.log("Error:")
+				console.log(error)
+			}
+
+			console.log("stdout:")
+			console.log(stdout)
+			console.log("stderr:")
+			console.log(stderr)
 		});
 	});
 };
 
+crontabCommand_noEnvVars = function(tab) {
+	var crontab_job_string = "";
+
+	let stderr = path.join(cronPath, tab._id + ".stderr");
+	let stdout = path.join(cronPath, tab._id + ".stdout");
+	let log_file = path.join(exports.log_folder, tab._id + ".log");
+	let log_file_stdout = path.join(exports.log_folder, tab._id + ".stdout.log");
+
+	var crontab_job_string_command = tab.command
+
+	if(crontab_job_string_command[crontab_job_string_command.length-1] != ";") { // add semicolon
+		crontab_job_string_command +=";";
+	}
+
+	crontab_job_string = crontab_job_string_command
+	crontab_job_string =  "{ " + crontab_job_string + " }" 
+	// write stdout to file
+	crontab_job_string =  "(" + crontab_job_string + " | tee " + stdout + ")"
+	// write stderr to file
+	crontab_job_string = "(" + crontab_job_string + " 3>&1 1>&2 2>&3 | tee " + stderr + ") 3>&1 1>&2 2>&3"
+	crontab_job_string =  "(" + crontab_job_string + ")"
+
+	if (tab.logging && tab.logging == "true") {
+		crontab_job_string += "; if test -f " + stderr +
+		"; then date >> \"" + log_file + "\"" +
+		"; cat " + stderr + " >> \"" + log_file + "\"" +
+		"; fi";
+
+		crontab_job_string += "; if test -f " + stdout +
+		"; then date >> \"" + log_file_stdout + "\"" +
+		"; cat " + stdout + " >> \"" + log_file_stdout + "\"" +
+		"; fi";
+	}
+
+	if (tab.hook) {
+		crontab_job_string += "; if test -f " + stdout +
+		"; then " + tab.hook + " < " + stdout +
+		"; fi";
+	}
+
+	if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
+		crontab_job_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
+	}
+
+	return crontab_job_string
+}
+
+addEnvironmentVariablesToCommand = function(env_vars, command) {
+	if (env_vars) {
+		let oneLineEnvVars = env_vars.replace(/\s*\n\s*/g,' ').trim()
+		return "(" + oneLineEnvVars + "; (" + command + "))"
+	}
+	
+	return "(" + command + ")"
+}
+
 // Set actual crontab file from the db
-exports.set_crontab = function(env_vars, callback){
+exports.set_crontab = function(env_vars, callback) {
 	exports.crontabs( function(tabs){
 		var crontab_string = "";
 		if (env_vars) {
-			crontab_string = env_vars + "\n";
+			crontab_string += env_vars;
+			crontab_string += "\n";
 		}
 		tabs.forEach(function(tab){
 			if(!tab.stopped) {
-				let stderr = path.join(cronPath, tab._id + ".stderr");
-				let stdout = path.join(cronPath, tab._id + ".stdout");
-				let log_file = path.join(exports.log_folder, tab._id + ".log");
-				let log_file_stdout = path.join(exports.log_folder, tab._id + ".stdout.log");
-
-				if(tab.command[tab.command.length-1] != ";") // add semicolon
-					tab.command +=";";
-
-				crontab_string += tab.schedule + " ({ " + tab.command + " } | tee " + stdout + ") 3>&1 1>&2 2>&3 | tee " + stderr;
-
-				if (tab.logging && tab.logging == "true") {
-					crontab_string += "; if test -f " + stderr +
-					"; then date >> \"" + log_file + "\"" +
-					"; cat " + stderr + " >> \"" + log_file + "\"" +
-					"; fi";
-					
-					crontab_string += "; if test -f " + stdout +
-					"; then date >> \"" + log_file_stdout + "\"" +
-					"; cat " + stdout + " >> \"" + log_file_stdout + "\"" +
-					"; fi";
-				}
-
-				if (tab.hook) {
-					crontab_string += "; if test -f " + stdout +
-					"; then " + tab.hook + " < " + stdout +
-					"; fi";
-				}
-
-				if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
-					crontab_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
-				}
-
+				crontab_string += tab.schedule
+				crontab_string += " "
+				crontab_string += crontabCommand_noEnvVars(tab)
 				crontab_string += "\n";
 			}
 		});
