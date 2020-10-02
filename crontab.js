@@ -93,9 +93,9 @@ exports.runjob = function(_id) {
 
 		let env_vars = exports.get_env()
 
-		var crontab_job_string_command = crontabCommand_noEnvVars(res)
+		let crontab_job_string_command = make_command(res)
 
-		crontab_job_string_command = addEnvironmentVariablesToCommand(env_vars, crontab_job_string_command)
+		crontab_job_string_command = add_env_vars(env_vars, crontab_job_string_command)
 
 		console.log("Running job")
 		console.log("ID: " + _id)		
@@ -104,19 +104,13 @@ exports.runjob = function(_id) {
 
 		exec(crontab_job_string_command, function(error, stdout, stderr){
 			if (error) {
-				console.log("Error:")
 				console.log(error)
 			}
-
-			console.log("stdout:")
-			console.log(stdout)
-			console.log("stderr:")
-			console.log(stderr)
 		});
 	});
 };
 
-crontabCommand_noEnvVars = function(tab) {
+make_command = function(tab) {
 	var crontab_job_string = "";
 
 	let stderr = path.join(cronPath, tab._id + ".stderr");
@@ -160,16 +154,16 @@ crontabCommand_noEnvVars = function(tab) {
 		crontab_job_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
 	}
 
-	return crontab_job_string
+	return crontab_job_string;
 }
 
-addEnvironmentVariablesToCommand = function(env_vars, command) {
-	if (env_vars) {
-		let oneLineEnvVars = env_vars.replace(/\s*\n\s*/g,' ').trim()
-		return "(" + oneLineEnvVars + "; (" + command + "))"
-	}
+add_env_vars = function(env_vars, command) {
+	console.log("env vars");
+	console.log(env_vars)
+	if (env_vars)
+		return "(" + env_vars.replace(/\s*\n\s*/g,' ').trim() + "; (" + command + "))";
 	
-	return "(" + command + ")"
+	return command;
 }
 
 // Set actual crontab file from the db
@@ -184,7 +178,7 @@ exports.set_crontab = function(env_vars, callback) {
 			if(!tab.stopped) {
 				crontab_string += tab.schedule
 				crontab_string += " "
-				crontab_string += crontabCommand_noEnvVars(tab)
+				crontab_string += make_command(tab)
 				crontab_string += "\n";
 			}
 		});
