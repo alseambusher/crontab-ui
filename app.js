@@ -122,8 +122,10 @@ app.get(routes.crontab, function(req, res, next) {
 
 // backup crontab db
 app.get(routes.backup, function(req, res) {
-	crontab.backup();
-	res.end();
+	crontab.backup((err) => {
+		if (err) next(err);
+		else res.end();
+	});
 });
 
 // This renders the restore page similar to backup page

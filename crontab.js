@@ -220,27 +220,24 @@ exports.get_backup_names = function(){
 		}
 	});
 
-	// Sort by date. Newest on top
-	for(var i=0; i<backups.length; i++){
-		var Ti = backups[i].split("backup")[1];
-		Ti = new Date(Ti.substring(0, Ti.length-3)).valueOf();
-		for(var j=0; j<i; j++){
-			var Tj = backups[j].split("backup")[1];
-			Tj = new Date(Tj.substring(0, Tj.length-3)).valueOf();
-			if(Ti > Tj){
-				var temp = backups[i];
-				backups[i] = backups[j];
-				backups[j] = temp;
-			}
-		}
+	let backup_date = (backup_name) => {
+		let T = backup_name.split("backup")[1];
+		return new Date(T.substring(0, T.length-3)).valueOf();
 	}
+
+	backups.sort((a, b) => backup_date(b) - backup_date(a));
 
 	return backups;
 };
 
-exports.backup = function(){
-	//TODO check if it failed
-	fs.createReadStream(exports.crontab_db_file).pipe(fs.createWriteStream( path.join(exports.db_folder, 'backup ' + (new Date()).toString().replace("+", " ") + '.db')));
+exports.backup = (callback) => {
+	fs.copyFile(exports.crontab_db_file, path.join(exports.db_folder, 'backup ' + (new Date()).toString().replace("+", " ") + '.db'), (err) => {
+		if (err) {
+			console.error(err);
+			return callback(err);
+		}
+		callback();
+	});
 };
 
 exports.restore = function(db_name){
