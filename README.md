@@ -28,9 +28,9 @@ Get latest `node` from [here](https://nodejs.org/en/download/current/). Then,
     npm install -g crontab-ui
     crontab-ui
 
-If you need to set/use an alternative host or port, you may do so by setting an environment variable before starting the process:
+If you need to set/use an alternative host, port OR base url, you may do so by setting an environment variable before starting the process:
 
-    HOST=0.0.0.0 PORT=9000 crontab-ui
+    HOST=0.0.0.0 PORT=9000 BASE_URL=/alse crontab-ui
 
 By default, db, backups and logs are stored in the installation directory. It is **recommended** that it be overriden using env variable `CRON_DB_PATH`. This is particularly helpful in case you **update** crontab-ui.
 
