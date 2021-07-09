@@ -19,6 +19,27 @@
 		$("#env_vars").val(`<%- env  %>`);
 	})
 </script>
+<style>
+	@keyframes spin {
+		0% { transform: rotate(0deg); }
+		100% { transform: rotate(360deg); }
+	}
+
+	.spinner {
+		display: inline-block;
+		border: 4px solid #f3f3f3; /* Light grey */
+		border-top: 4px solid #3498db; /* Blue */
+		border-radius: 50%;
+		width: 18px;
+		height: 18px;
+		animation: spin 2s linear infinite;
+		margin-left: 5em;
+	}
+
+	td {
+		vertical-align: middle !important;
+	}
+</style>
 </head>
 <body>
 <%- include('navbar.ejs') -%>
@@ -83,9 +104,20 @@
 				</td>
 				<td><%= crontab.command %></td>
 				<td><span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab.next %>"><%= crontab.schedule %></span></td>
-				<td style="width:20%" title="<%= crontab.timestamp %>"><%= moment(new Date(crontab.timestamp)).fromNow() %></td>
+				<td style="width:16%" title="<%= crontab.timestamp %>"><%= moment(new Date(crontab.timestamp)).fromNow() %>
+					<% if (crontab.running == 1) {%>
+						<div class='spinner'></div>
+						<script type="text/javascript">
+							function waitForFinish() {
+								if (crontabs[<%= index %>-2].running == 1) {
+									return setTimeout(window.location.reload.bind(window.location),5000);
+								}
+							}
+							window.onload = waitForFinish;
+						</script>
+					<% } %>
+				</td>
 				<td>
-
 		<!-- controls based on crontab state -->
 		<% if (crontab.logging && crontab.logging != "false") {%>
 			<a class="btn btn-primary btn-danger" data-toggle="tooltip" data-placement="left" title="stderr" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
