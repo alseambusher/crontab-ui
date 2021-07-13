@@ -39,18 +39,19 @@ crontab = function(name, command, schedule, stopped, logging, mailing){
 	if (!mailing)
 		mailing = {};
 	data.mailing = mailing;
+	data.running = 0;
 	return data;
 };
 
 exports.create_new = function(name, command, schedule, logging, mailing){
-	var tab = crontab(name, command, schedule, false, logging, mailing);
+	var tab = crontab(name, command, schedule, true, logging, mailing);
 	tab.created = new Date().valueOf();
 	tab.saved = false;
 	db.insert(tab);
 };
 
 exports.update = function(data){
-	var tab = crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing);
+	var tab = crontab(data.name, data.command, data.schedule, true, data.logging, data.mailing);
 	tab.saved = false;
 	db.update({_id: data._id}, tab);
 };
@@ -98,14 +99,18 @@ exports.runjob = function(_id) {
 		crontab_job_string_command = add_env_vars(env_vars, crontab_job_string_command)
 
 		console.log("Running job")
-		console.log("ID: " + _id)		
+		console.log("ID: " + _id)
 		console.log("Original command: " + res.command)
 		console.log("Executed command: " + crontab_job_string_command)
 
+		res.running = 1;
+		db.update({_id: _id},{$set: {running: res.running, saved: false}});
 		exec(crontab_job_string_command, function(error, stdout, stderr){
 			if (error) {
 				console.log(error)
 			}
+			res.running = 0;
+			db.update({_id: _id},{$set: {running: res.running, saved: false}});
 		});
 	});
 };

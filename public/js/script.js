@@ -60,7 +60,6 @@ function runJob(_id){
 		$.post(routes.run, {_id: _id}, function(){
 			location.reload();
 		});
-		
 	});
 }
 
