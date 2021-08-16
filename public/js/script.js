@@ -167,6 +167,14 @@ function doBackup(){
 	});
 }
 
+function doReset(){
+  messageBox("<p> Do you want to reset crontab-ui? </p>", "Confirm reset", null, null, function(){
+		$.get(routes.reset, {}, function(){
+			location.reload();
+		});
+	});
+}
+
 function delete_backup(db_name){
 	messageBox("<p> Do you want to delete this backup? </p>", "Confirm delete", null, null, function(){
 		$.get(routes.delete_backup, {db: db_name}, function(){

@@ -30,6 +30,7 @@
 	</div>
 	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
 	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
+    <a class="btn btn-info" onclick="doReset();"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Reset</a>
 	<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
 		<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
 	</form>

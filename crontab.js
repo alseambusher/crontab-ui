@@ -240,6 +240,29 @@ exports.backup = (callback) => {
 	});
 };
 
+exports.reset = (callback) => {
+  console.log("Resetting crontab-ui");
+  var crontabdb = exports.crontab_db_file;
+  var envdb = exports.env_file;
+
+  console.log("Deleting " + crontabdb);
+  try{
+    fs.unlinkSync(crontabdb);
+  } catch (e) {
+    console.log("Unable to delete " + crontabdb);
+  }
+
+  console.log("Deleting " + envdb);
+  try{
+    fs.unlinkSync(envdb);
+  } catch (e) {
+    console.log("Unable to delete " + envdb);
+  }
+
+  db.loadDatabase();
+  callback();
+}
+
 exports.restore = function(db_name){
 	fs.createReadStream(path.join(exports.db_folder, db_name)).pipe(fs.createWriteStream(exports.crontab_db_file));
 	db.loadDatabase(); // reload the database

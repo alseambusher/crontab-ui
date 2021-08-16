@@ -13,6 +13,7 @@ var routes = {
 	"start": "/start",
 	"remove": "/remove",
 	"backup": "/backup",
+	"reset": "/reset",
 	"restore": "/restore",
 	"delete_backup": "/delete",
 	"restore_backup": "/restore_backup",
