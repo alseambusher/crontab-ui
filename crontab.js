@@ -157,6 +157,28 @@ make_command = function(tab) {
 	return crontab_job_string;
 }
 
+parse_command = function(job_string) {
+	var regex_start = /\(\(\({ /;
+	var regex_end = /; } | tee/
+	var res_start = job_string.search(regex_start);
+	var res_end = job_string.search(regex_end);
+	var command = job_string;
+	if(res_start > -1 && res_end > -1){
+		command = job_string.substr(res_start + 5, res_end - res_start - 5);
+	}
+	return command
+}
+
+parse_logging = function(job_string) {
+	var regex = /if test -f/;
+	var res = job_string.search(regex);
+	var logging = false;
+	if(res > -1){
+		logging = true
+	}
+	return logging
+}
+
 add_env_vars = function(env_vars, command) {
 	console.log("env vars");
 	console.log(env_vars)
@@ -289,6 +311,9 @@ exports.import_crontab = function(){
 			var regex = /^((\@[a-zA-Z]+\s+)|(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+))/;
 			var command = line.replace(regex, '').trim();
 			var schedule = line.replace(command, '').trim();
+			var new_command = parse_command(command)
+			var logging = parse_logging(command)
+			command = new_command
 
 			var is_valid = false;
 			try { is_valid = cron_parser.parseString(line).expressions.length > 0; } catch (e){}
@@ -301,7 +326,7 @@ exports.import_crontab = function(){
 						throw err;
 					}
 					if(!doc){
-						exports.create_new(name, command, schedule, null);
+						exports.create_new(name, command, schedule, logging);
 					}
 					else{
 						doc.command = command;
