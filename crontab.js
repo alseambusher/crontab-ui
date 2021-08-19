@@ -172,9 +172,9 @@ parse_command = function(job_string) {
 parse_logging = function(job_string) {
 	var regex = /if test -f/;
 	var res = job_string.search(regex);
-	var logging = false;
+	var logging = null;
 	if(res > -1){
-		logging = true
+		logging = "true"
 	}
 	return logging
 }
