@@ -11,7 +11,6 @@ exports.crontab_db_file = path.join(exports.db_folder, 'crontab.db');
 
 var db = new Datastore({ filename: exports.crontab_db_file});
 var cronPath = "/tmp";
-
 if(process.env.CRON_PATH !== undefined) {
 	console.log(`Path to crond files set using env variables ${process.env.CRON_PATH}`);
 	cronPath = process.env.CRON_PATH;
@@ -24,6 +23,8 @@ db.loadDatabase(function (err) {
 var exec = require('child_process').exec;
 var fs = require('fs');
 var cron_parser = require("cron-parser");
+var cronstrue = require('cronstrue/i18n');
+var humanCronLocate = process.env.HUMANCRON ?? "en"
 
 
 crontab = function(name, command, schedule, stopped, logging, mailing){
@@ -71,6 +72,7 @@ exports.crontabs = function(callback){
 				docs[i].next = "Next Reboot";
 			else
 				try {
+					docs[i].human = cronstrue.toString(docs[i].schedule, { locale: humanCronLocate });
 					docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
 				} catch(err) {
 					console.error(err);

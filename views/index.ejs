@@ -82,7 +82,8 @@
 					<% } %>
 				</td>
 				<td><%= crontab.command %></td>
-				<td><span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab.next %>"><%= crontab.schedule %></span></td>
+				<td><span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab
+							.next %>"><%= crontab.schedule %><br><%= crontab.human %></span></td>
 				<td style="width:20%" title="<%= crontab.timestamp %>"><%= moment(new Date(crontab.timestamp)).fromNow() %></td>
 				<td>
 
