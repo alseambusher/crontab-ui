@@ -1,6 +1,6 @@
 {
   "name": "crontab-ui",
-  "version": "0.3.14",
+  "version": "0.3.15",
   "description": "Easy and safe way to manage your crontab file",
   "main": "index.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "body-parser": "latest",
     "connect-busboy": "latest",
     "cron-parser": "latest",
+    "cronstrue": "latest",
     "ejs": "latest",
     "express": "latest",
     "express-basic-auth": "^1.2.0",
