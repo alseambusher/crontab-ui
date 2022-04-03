@@ -1,6 +1,6 @@
 {
   "name": "crontab-ui",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "description": "Easy and safe way to manage your crontab file",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,7 @@
     "mime-types": "latest",
     "moment": "latest",
     "nedb": "latest",
-    "nodemailer": "latest"
+    "nodemailer": "^6.7.3"
   },
   "engines": {
     "node": "latest"
