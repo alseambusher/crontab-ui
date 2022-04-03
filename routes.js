@@ -1,5 +1,5 @@
 // base url
-var base_url = process.env.BASE_URL ?? '';
+var base_url = (process.env.BASE_URL == undefined ? '' : process.env.BASE_URL);
 base_url = base_url.replace(/\/+$/, "").trim();
 
 exports.base_url = base_url;
