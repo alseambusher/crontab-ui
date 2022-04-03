@@ -5,6 +5,8 @@ var crontab = require("./crontab");
 var restore = require("./restore");
 var moment = require('moment');
 var basicAuth = require('express-basic-auth');
+var http = require('http');
+var https = require('https');
 
 var path = require('path');
 var mime = require('mime-types');
@@ -31,6 +33,22 @@ if (BASIC_AUTH_USER && BASIC_AUTH_PWD) {
         }
     }))
 }
+
+// ssl credentials
+var credentials = {
+  key: process.env.SSL_KEY ? fs.readFileSync(process.env.SSL_KEY) : '',
+  cert: process.env.SSL_CERT ? fs.readFileSync(process.env.SSL_CERT) : '',
+}
+
+if (
+  (credentials.key && !credentials.cert) ||
+  (credentials.cert && !credentials.key)
+) {
+    console.error('Please provide both SSL_KEY and SSL_CERT');
+    process.exit(1);
+  }
+
+var startHttpsServer = credentials.key && credentials.cert;
 
 // include the routes
 var routes = require("./routes").routes;
@@ -238,7 +256,10 @@ process.on('SIGTERM', function() {
   process.exit();
 })
 
-app.listen(app.get('port'), app.get('host'), function() {
+var server = startHttpsServer ?
+  https.createServer(credentials, app) : http.createServer(app);
+
+server.listen(app.get('port'), app.get('host'), function() {
   console.log("Node version:", process.versions.node);
   fs.access(crontab.db_folder, fs.W_OK, function(err) {
     if(err){
@@ -277,5 +298,7 @@ app.listen(app.get('port'), app.get('host'), function() {
 
     crontab.reload_db();
   }
-	console.log("Crontab UI is running at http://" + app.get('host') + ":" + app.get('port') + base_url);
+
+  var protocol = startHttpsServer ? "https" : "http";
+  console.log("Crontab UI is running at " + protocol + "://" + app.get('host') + ":" + app.get('port') + base_url);
 });
