@@ -42,7 +42,7 @@ If you need to apply basic HTTP authentication, you can set user name and passwo
     
 Also, you may have to **set permissions** for your `node_modules` folder. Refer [this](https://docs.npmjs.com/getting-started/fixing-npm-permissions).
 
-If you need to use SSL, you can pass the private key and certificat through environment variables:
+If you need to use SSL, you can pass the private key and certificate through environment variables:
 
     SSL_CERT=/path/to/ssl_certificate SSL_KEY=/path/to/ssl_private_key
 
