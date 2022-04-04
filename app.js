@@ -3,6 +3,7 @@ var express = require('express');
 var app = express();
 var crontab = require("./crontab");
 var restore = require("./restore");
+var package_json = require('./package.json');
 var moment = require('moment');
 var basicAuth = require('express-basic-auth');
 var http = require('http');
@@ -269,7 +270,7 @@ server.listen(app.get('port'), app.get('host'), function() {
   });
   // If --autosave is used then we will also save whatever is in the db automatically without having to mention it explictly
   // we do this by watching log file and setting a on change hook to it
-  if (process.argv.includes("--autosave")){
+  if (process.argv.includes("--autosave") || process.env.ENABLE_AUTOSAVE) {
     crontab.autosave_crontab(()=>{});
     fs.watchFile(crontab.crontab_db_file, () => {
       crontab.autosave_crontab(()=>{
@@ -300,5 +301,5 @@ server.listen(app.get('port'), app.get('host'), function() {
   }
 
   var protocol = startHttpsServer ? "https" : "http";
-  console.log("Crontab UI is running at " + protocol + "://" + app.get('host') + ":" + app.get('port') + base_url);
+  console.log("Crontab UI (" + package_json.version + ") is running at " + protocol + "://" + app.get('host') + ":" + app.get('port') + base_url);
 });
