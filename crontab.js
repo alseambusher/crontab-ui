@@ -152,9 +152,9 @@ make_command = function(tab) {
 		"; fi";
 	}
 
-	if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
-		crontab_job_string += "; /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
-	}
+	//if (tab.mailing && JSON.stringify(tab.mailing) != "{}"){
+		crontab_job_string += "; CRON_DB_PATH=" + exports.db_folder  + " /usr/local/bin/node " + __dirname + "/bin/crontab-ui-mailer.js " + tab._id + " " + stdout + " " + stderr;
+	//}
 
 	return crontab_job_string;
 }
