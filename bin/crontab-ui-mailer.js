@@ -16,7 +16,8 @@ crontab.get_crontab(process.argv[process.argv.length -1 -2], function(job){
     var transporter = nodemailer.createTransport(job.mailing.transporterStr);
   }
   var mailOptions = job.mailing.mailOptions;
-
+  mailOptions.subject = job.name + ' ' + mailOptions.subject;
+  
   mailOptions.attachments = [{filename: "stdout.txt", path: process.argv[process.argv.length -1 -1]}, {filename: "stderr.txt", path: process.argv[process.argv.length -1]}];
 
   transporter.sendMail(mailOptions, function(error, info){
