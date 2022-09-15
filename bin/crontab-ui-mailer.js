@@ -4,7 +4,28 @@ var defaults = require("../config/mailconfig.js");
 var crontab = require("../crontab.js");
 var nodemailer = require('nodemailer');
 
+
+const fs = require('fs');
+
+function isFileEmpty(fileName) {
+    const stat = fs.statSync(fileName);
+    if (stat.size == 0 ) {
+      return true;
+    }
+    return false;
+}
+
 crontab.get_crontab(process.argv[process.argv.length -1 -2], function(job){
+
+  const stdout_file = process.argv[process.argv.length -1 -1];
+  const stderr_file = process.argv[process.argv.length -1];
+
+  if (isFileEmpty(stderr_file) &&  isFileEmpty(stdout_file)) {
+    // no output. no need to email.
+    return;
+  }
+
+
   if (!job.mailing || job.mailing == undefined || job.mailing.mailOptions == undefined) {
     var mailOptions = defaults.mailOptions;
     var transporterStr = defaults.transporterStr;
@@ -39,7 +60,7 @@ crontab.get_crontab(process.argv[process.argv.length -1 -2], function(job){
   mailOptions.text = replaceAll(mailOptions.text, keywordsMap);
   mailOptions.html = replaceAll(mailOptions.html, keywordsMap);
 
-  mailOptions.attachments = [{filename: "stdout.txt", path: process.argv[process.argv.length -1 -1]}, {filename: "stderr.txt", path: process.argv[process.argv.length -1]}];
+  mailOptions.attachments = [{filename: "stdout.txt", path: stdout_file}, {filename: "stderr.txt", path: stderr_file}];
 
   transporter.sendMail(mailOptions, function(error, info){
     if(error){
