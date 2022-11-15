@@ -26,6 +26,9 @@ var cron_parser = require("cron-parser");
 var cronstrue = require('cronstrue/i18n');
 var humanCronLocate = process.env.HUMANCRON ?? "en"
 
+if (!fs.existsSync(exports.log_folder)){
+    fs.mkdirSync(exports.log_folder);
+}
 
 crontab = function(name, command, schedule, stopped, logging, mailing){
 	var data = {};
