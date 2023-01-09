@@ -10,6 +10,7 @@ exports.env_file =  path.join(exports.db_folder, 'env.db');
 exports.crontab_db_file = path.join(exports.db_folder, 'crontab.db');
 
 var db = new Datastore({ filename: exports.crontab_db_file});
+db.persistence.setAutocompactionInterval(30000);
 var cronPath = "/tmp";
 if(process.env.CRON_PATH !== undefined) {
 	console.log(`Path to crond files set using env variables ${process.env.CRON_PATH}`);
