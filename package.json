@@ -17,7 +17,7 @@
     "express-basic-auth": "^1.2.0",
     "mime-types": "latest",
     "moment": "latest",
-    "nedb": "latest",
+    "@seald-io/nedb": "latest",
     "nodemailer": "^6.7.3"
   },
   "engines": {
