@@ -1,6 +1,6 @@
 /*jshint esversion: 6*/
 //load database
-var Datastore = require('nedb');
+var Datastore = require('@seald-io/nedb');
 var path = require("path");
 
 exports.db_folder = process.env.CRON_DB_PATH === undefined ? path.join(__dirname,  "crontabs") : process.env.CRON_DB_PATH;
