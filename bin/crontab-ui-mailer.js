@@ -25,8 +25,7 @@ crontab.get_crontab(process.argv[process.argv.length -1 -2], function(job){
     return;
   }
 
-
-  if (!job.mailing || job.mailing == undefined || job.mailing.mailOptions == undefined) {
+  if (!job.mailing || job.mailing == undefined || job.mailing.mailOptions == undefined || job.mailing == {}) {
     var mailOptions = defaults.mailOptions;
     var transporterStr = defaults.transporterStr;
   } else {

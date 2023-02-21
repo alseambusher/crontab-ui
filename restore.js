@@ -1,5 +1,5 @@
 //load database
-var Datastore = require('nedb');
+var Datastore = require('@seald-io/nedb');
 var crontab = require("./crontab");
 var path = require("path");
 
