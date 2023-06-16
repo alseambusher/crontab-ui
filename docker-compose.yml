@@ -3,7 +3,7 @@ version: '3.7'
 services:
   crontab-ui:
     build: .
-    image: alseambusher/crontab-ui
+    image: stealthizer/crontab-ui
     network_mode: bridge
     ports:
       - 8000:8000
