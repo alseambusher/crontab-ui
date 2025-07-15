@@ -1,15 +1,22 @@
 /*jshint esversion: 6*/
 //load database
-var Datastore = require('nedb');
+const { Low, JSONFile } = require('lowdb');
 var path = require("path");
 
 exports.db_folder = process.env.CRON_DB_PATH === undefined ? path.join(__dirname,  "crontabs") : process.env.CRON_DB_PATH;
 console.log("Cron db path: " + exports.db_folder);
 exports.log_folder = path.join(exports.db_folder, 'logs');
 exports.env_file =  path.join(exports.db_folder, 'env.db');
-exports.crontab_db_file = path.join(exports.db_folder, 'crontab.db');
+exports.crontab_db_file = path.join(exports.db_folder, 'crontab.json');
 
-var db = new Datastore({ filename: exports.crontab_db_file});
+const adapter = new JSONFile(exports.crontab_db_file);
+const db = new Low(adapter);
+async function initDB() {
+  await db.read();
+  db.data = db.data || { crontabs: [] };
+  await db.write();
+}
+initDB();
 var cronPath = "/tmp";
 if(process.env.CRON_PATH !== undefined) {
 	console.log(`Path to crond files set using env variables ${process.env.CRON_PATH}`);
@@ -27,7 +34,7 @@ var cronstrue = require('cronstrue/i18n');
 var humanCronLocate = process.env.HUMANCRON ?? "en"
 
 if (!fs.existsSync(exports.log_folder)){
-    fs.mkdirSync(exports.log_folder);
+	fs.mkdirSync(exports.log_folder);
 }
 
 crontab = function(name, command, schedule, stopped, logging, mailing){
@@ -46,73 +53,84 @@ crontab = function(name, command, schedule, stopped, logging, mailing){
 	return data;
 };
 
-exports.create_new = function(name, command, schedule, logging, mailing){
-	var tab = crontab(name, command, schedule, false, logging, mailing);
-	tab.created = new Date().valueOf();
-	tab.saved = false;
-	db.insert(tab);
+exports.create_new = async function(name, command, schedule, logging, mailing){
+  await initDB();
+  var tab = crontab(name, command, schedule, false, logging, mailing);
+  tab.created = new Date().valueOf();
+  tab.saved = false;
+  tab._id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+  db.data.crontabs.push(tab);
+  await db.write();
 };
 
-exports.update = function(data){
-	var tab = crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing);
-	tab.saved = false;
-	db.update({_id: data._id}, tab);
+exports.update = async function(data){
+  await initDB();
+  var tab = crontab(data.name, data.command, data.schedule, null, data.logging, data.mailing);
+  tab.saved = false;
+  const idx = db.data.crontabs.findIndex(t => t._id === data._id);
+  if (idx !== -1) {
+	db.data.crontabs[idx] = { ...db.data.crontabs[idx], ...tab };
+	await db.write();
+  }
 };
 
-exports.status = function(_id, stopped){
-	db.update({_id: _id},{$set: {stopped: stopped, saved: false}});
+exports.status = async function(_id, stopped){
+  await initDB();
+  const idx = db.data.crontabs.findIndex(t => t._id === _id);
+  if (idx !== -1) {
+	db.data.crontabs[idx].stopped = stopped;
+	db.data.crontabs[idx].saved = false;
+	await db.write();
+  }
 };
 
-exports.remove = function(_id){
-	db.remove({_id: _id}, {});
+exports.remove = async function(_id){
+  await initDB();
+  db.data.crontabs = db.data.crontabs.filter(t => t._id !== _id);
+  await db.write();
 };
 
 // Iterates through all the crontab entries in the db and calls the callback with the entries
-exports.crontabs = function(callback){
-	db.find({}).sort({ created: -1 }).exec(function(err, docs){
-		for(var i=0; i<docs.length; i++){
-			if(docs[i].schedule == "@reboot")
-				docs[i].next = "Next Reboot";
-			else
-				try {
-					docs[i].human = cronstrue.toString(docs[i].schedule, { locale: humanCronLocate });
-					docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
-				} catch(err) {
-					console.error(err);
-					docs[i].next = "invalid";
-				}
-		}
-		callback(docs);
-	});
+exports.crontabs = async function(callback){
+  await initDB();
+  let docs = db.data.crontabs.slice().sort((a, b) => b.created - a.created);
+  for(let i=0; i<docs.length; i++){
+	if(docs[i].schedule == "@reboot")
+	  docs[i].next = "Next Reboot";
+	else
+	  try {
+		docs[i].human = cronstrue.toString(docs[i].schedule, { locale: humanCronLocate });
+		docs[i].next = cron_parser.parseExpression(docs[i].schedule).next().toString();
+	  } catch(err) {
+		console.error(err);
+		docs[i].next = "invalid";
+	  }
+  }
+  callback(docs);
 };
 
-exports.get_crontab = function(_id, callback) {
-	db.find({_id: _id}).exec(function(err, docs){
-		callback(docs[0]);
-	});
+exports.get_crontab = async function(_id, callback) {
+  await initDB();
+  const doc = db.data.crontabs.find(t => t._id === _id);
+  callback(doc);
 };
 
-exports.runjob = function(_id) {
-	db.find({_id: _id}).exec(function(err, docs){
-		let res = docs[0];
-
-		let env_vars = exports.get_env()
-
-		let crontab_job_string_command = make_command(res)
-
-		crontab_job_string_command = add_env_vars(env_vars, crontab_job_string_command)
-
-		console.log("Running job")
-		console.log("ID: " + _id)		
-		console.log("Original command: " + res.command)
-		console.log("Executed command: " + crontab_job_string_command)
-
-		exec(crontab_job_string_command, function(error, stdout, stderr){
-			if (error) {
-				console.log(error)
-			}
-		});
-	});
+exports.runjob = async function(_id) {
+  await initDB();
+  let res = db.data.crontabs.find(t => t._id === _id);
+  if (!res) return;
+  let env_vars = exports.get_env();
+  let crontab_job_string_command = make_command(res);
+  crontab_job_string_command = add_env_vars(env_vars, crontab_job_string_command);
+  console.log("Running job");
+  console.log("ID: " + _id);
+  console.log("Original command: " + res.command);
+  console.log("Executed command: " + crontab_job_string_command);
+  exec(crontab_job_string_command, function(error, stdout, stderr){
+	if (error) {
+	  console.log(error);
+	}
+  });
 };
 
 make_command = function(tab) {
@@ -172,48 +190,47 @@ add_env_vars = function(env_vars, command) {
 }
 
 // Set actual crontab file from the db
-exports.set_crontab = function(env_vars, callback) {
-	exports.crontabs( function(tabs){
-		var crontab_string = "";
-		if (env_vars) {
-			crontab_string += env_vars;
-			crontab_string += "\n";
-		}
-		tabs.forEach(function(tab){
-			if(!tab.stopped) {
-				crontab_string += tab.schedule
-				crontab_string += " "
-				crontab_string += make_command(tab)
-				crontab_string += "\n";
-			}
-		});
-
-		fs.writeFile(exports.env_file, env_vars, function(err) {
-			if (err) {
-				console.error(err);
-				callback(err);
-			}
-			// In docker we're running as the root user, so we need to write the file as root and not crontab
-			var fileName = process.env.CRON_IN_DOCKER !== undefined  ? "root" : "crontab";
-			fs.writeFile(path.join(cronPath, fileName), crontab_string, function(err) {
-				if (err) {
-					console.error(err);
-					return callback(err);
-				}
-
-				exec("crontab " + path.join(cronPath, fileName), function(err) {
-					if (err) {
-						console.error(err);
-						return callback(err);
-					}
-					else {
-						db.update({},{$set: {saved: true}}, {multi: true});
-						callback();
-					}
-				});
-			});
-		});
+exports.set_crontab = async function(env_vars, callback) {
+  await exports.crontabs(async function(tabs){
+	var crontab_string = "";
+	if (env_vars) {
+	  crontab_string += env_vars;
+	  crontab_string += "\n";
+	}
+	tabs.forEach(function(tab){
+	  if(!tab.stopped) {
+		crontab_string += tab.schedule;
+		crontab_string += " ";
+		crontab_string += make_command(tab);
+		crontab_string += "\n";
+	  }
 	});
+	fs.writeFile(exports.env_file, env_vars, function(err) {
+	  if (err) {
+		console.error(err);
+		callback(err);
+	  }
+	  var fileName = process.env.CRON_IN_DOCKER !== undefined  ? "root" : "crontab";
+	  fs.writeFile(path.join(cronPath, fileName), crontab_string, function(err) {
+		if (err) {
+		  console.error(err);
+		  return callback(err);
+		}
+		exec("crontab " + path.join(cronPath, fileName), async function(err) {
+		  if (err) {
+			console.error(err);
+			return callback(err);
+		  }
+		  else {
+			await initDB();
+			db.data.crontabs.forEach(tab => tab.saved = true);
+			await db.write();
+			callback();
+		  }
+		});
+	  });
+	});
+  });
 };
 
 exports.get_backup_names = function(){
@@ -246,54 +263,42 @@ exports.backup = (callback) => {
 };
 
 exports.restore = function(db_name){
-	fs.createReadStream(path.join(exports.db_folder, db_name)).pipe(fs.createWriteStream(exports.crontab_db_file));
-	db.loadDatabase(); // reload the database
+  fs.createReadStream(path.join(exports.db_folder, db_name)).pipe(fs.createWriteStream(exports.crontab_db_file));
+  // For lowdb, reload is just re-reading the file
+  initDB();
 };
 
 exports.reload_db = function(){
-	db.loadDatabase();
-};
-
-exports.get_env = function(){
-	if (fs.existsSync(exports.env_file)) {
-		return fs.readFileSync(exports.env_file , 'utf8').replace("\n", "\n");
-	}
-	return "";
+  initDB();
 };
 
 exports.import_crontab = function(){
-	exec("crontab -l", function(error, stdout, stderr){
-		var lines = stdout.split("\n");
-		var namePrefix = new Date().getTime();
-
-		lines.forEach(function(line, index){
-			line = line.replace(/\t+/g, ' ');
-			var regex = /^((\@[a-zA-Z]+\s+)|(([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+([^\s]+)\s+))/;
-			var command = line.replace(regex, '').trim();
-			var schedule = line.replace(command, '').trim();
-
-			var is_valid = false;
-			try { is_valid = cron_parser.parseString(line).expressions.length > 0; } catch (e){}
-
-			if(command && schedule && is_valid){
-				var name = namePrefix + '_' + index;
-
-				db.findOne({ command: command, schedule: schedule }, function(err, doc) {
-					if(err) {
-						throw err;
-					}
-					if(!doc){
-						exports.create_new(name, command, schedule, null);
-					}
-					else{
-						doc.command = command;
-						doc.schedule = schedule;
-						exports.update(doc);
-					}
-				});
-			}
-		});
-	});
+  exec("crontab -l", async function(error, stdout, stderr){
+	var lines = stdout.split("\n");
+	var namePrefix = new Date().getTime();
+	await initDB();
+	for (let index = 0; index < lines.length; index++) {
+	  let line = lines[index].replace(/\t+/g, ' ');
+	  var regex = /^((\@[a-zA-Z]+\s+)|(([^ -]+)\s+([^ -]+)\s+([^ -]+)\s+([^ -]+)\s+([^ -]+)\s+))/;
+	  var command = line.replace(regex, '').trim();
+	  var schedule = line.replace(command, '').trim();
+	  var is_valid = false;
+	  try { is_valid = cron_parser.parseString(line).expressions.length > 0; } catch (e){}
+	  if(command && schedule && is_valid){
+		var name = namePrefix + '_' + index;
+		let doc = db.data.crontabs.find(t => t.command === command && t.schedule === schedule);
+		if(!doc){
+		  await exports.create_new(name, command, schedule, null);
+		}
+		else{
+		  doc.command = command;
+		  doc.schedule = schedule;
+		  await exports.update(doc);
+		}
+	  }
+	}
+	await db.write();
+  });
 };
 
 exports.autosave_crontab = function(callback) {

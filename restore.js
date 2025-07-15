@@ -1,18 +1,18 @@
 //load database
-var Datastore = require('nedb');
+const { Low, JSONFile } = require('lowdb');
 var crontab = require("./crontab");
 var path = require("path");
 
 var exec = require('child_process').exec;
 var fs = require('fs');
 
-exports.crontabs = function(db_name, callback){
-	var db = new Datastore({filename: path.join(crontab.db_folder, db_name)});
-	db.loadDatabase(function (err) {
-	});
-	db.find({}).sort({ created: -1 }).exec(function(err, docs){
-		callback(docs);
-	});
+exports.crontabs = async function(db_name, callback){
+  const adapter = new JSONFile(path.join(crontab.db_folder, db_name));
+  const db = new Low(adapter);
+  await db.read();
+  db.data = db.data || { crontabs: [] };
+  let docs = db.data.crontabs.slice().sort((a, b) => b.created - a.created);
+  callback(docs);
 };
 
 exports.delete = function(db_name){

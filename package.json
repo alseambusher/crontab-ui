@@ -5,20 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "test": "node tests/test.js"
+    "test": "node tests/test.js",
+    "update-libs": "npx npm-check-updates -u && npm install"
   },
   "dependencies": {
     "body-parser": "latest",
     "connect-busboy": "latest",
     "cron-parser": "latest",
     "cronstrue": "latest",
-    "ejs": "latest",
-    "express": "latest",
-    "express-basic-auth": "^1.2.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-basic-auth": "^1.2.1",
+    "lowdb": "^7.0.1",
     "mime-types": "latest",
-    "moment": "latest",
-    "nedb": "latest",
-    "nodemailer": "^6.7.3"
+    "moment": "^2.30.1",
+    "nodemailer": "^7.0.5"
   },
   "engines": {
     "node": ">=15.0.0"
@@ -36,5 +37,8 @@
     "node"
   ],
   "author": "Suresh Alse",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "npm-check-updates": "^18.0.1"
+  }
 }
