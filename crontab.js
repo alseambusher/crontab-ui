@@ -273,7 +273,7 @@ exports.import_crontab = function(){
 			var schedule = line.replace(command, '').trim();
 
 			var is_valid = false;
-			try { is_valid = cron_parser.parseString(line).expressions.length > 0; } catch (e){}
+			try { cron_parser.parseExpression(line); is_valid = true; } catch (e){}
 
 			if(command && schedule && is_valid){
 				var name = namePrefix + '_' + index;
