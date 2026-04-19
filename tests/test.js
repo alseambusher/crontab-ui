@@ -211,6 +211,22 @@ describe('Crontab UI', () => {
       expect(res.status).toBe(200);
       expect(res.text).toContain('No errors logged yet');
     });
+
+    it('should return text/plain content type when no log exists', async () => {
+      const res = await request(app).get('/logger?id=nonexistent');
+      expect(res.headers['content-type']).toContain('text/plain');
+    });
+
+    it('should return text/plain and no-store when log file exists', async () => {
+      const logFile = path.join(testDbPath, 'logs', 'testlog.log');
+      fs.writeFileSync(logFile, 'some error output\n');
+      const res = await request(app).get('/logger?id=testlog');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('text/plain');
+      expect(res.headers['cache-control']).toBe('no-store');
+      expect(res.text).toContain('some error output');
+      fs.unlinkSync(logFile);
+    });
   });
 
   describe('GET /stdout', () => {
@@ -218,6 +234,64 @@ describe('Crontab UI', () => {
       const res = await request(app).get('/stdout?id=nonexistent');
       expect(res.status).toBe(200);
       expect(res.text).toContain('No errors logged yet');
+    });
+
+    it('should return text/plain content type when no log exists', async () => {
+      const res = await request(app).get('/stdout?id=nonexistent');
+      expect(res.headers['content-type']).toContain('text/plain');
+    });
+
+    it('should return text/plain and no-store when stdout log exists', async () => {
+      const logFile = path.join(testDbPath, 'logs', 'teststdout.stdout.log');
+      fs.writeFileSync(logFile, 'some stdout output\n');
+      const res = await request(app).get('/stdout?id=teststdout');
+      expect(res.status).toBe(200);
+      expect(res.headers['content-type']).toContain('text/plain');
+      expect(res.headers['cache-control']).toBe('no-store');
+      expect(res.text).toContain('some stdout output');
+      fs.unlinkSync(logFile);
+    });
+  });
+
+  describe('GET /import_crontab (auto-backup)', () => {
+    it('should create a backup before importing', async () => {
+      // ensure a job exists so crontab.db is non-empty
+      await request(app).post('/save').send({
+        _id: -1, name: 'backup-test', command: 'echo backup',
+        schedule: '* * * * *', logging: 'false', mailing: {},
+      });
+      // small delay so backup filename (based on date) doesn't collide
+      await new Promise((r) => setTimeout(r, 1100));
+      const backupsBefore = fs.readdirSync(testDbPath)
+        .filter((f) => f.startsWith('backup'));
+      await request(app).get('/import_crontab');
+      const backupsAfter = fs.readdirSync(testDbPath)
+        .filter((f) => f.startsWith('backup'));
+      expect(backupsAfter.length).toBe(backupsBefore.length + 1);
+    });
+  });
+
+  describe('POST /import (auto-backup)', () => {
+    it('should create a backup before importing a db file', async () => {
+      // small delay so backup filename (based on date) doesn't collide
+      await new Promise((r) => setTimeout(r, 1100));
+      const backupsBefore = fs.readdirSync(testDbPath)
+        .filter((f) => f.startsWith('backup'));
+      const dbContent = fs.readFileSync(path.join(testDbPath, 'crontab.db'));
+      await request(app)
+        .post('/import')
+        .attach('file', dbContent, 'crontab.db');
+      const backupsAfter = fs.readdirSync(testDbPath)
+        .filter((f) => f.startsWith('backup'));
+      expect(backupsAfter.length).toBe(backupsBefore.length + 1);
+    });
+  });
+
+  describe('Command textarea', () => {
+    it('should render a textarea for the command field', async () => {
+      const res = await request(app).get('/');
+      expect(res.text).toContain('<textarea');
+      expect(res.text).toContain('id=\'job-command\'');
     });
   });
 });
