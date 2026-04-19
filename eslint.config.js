@@ -6,10 +6,12 @@ module.exports = [
   {
     ignores: [
       'node_modules/**',
+      'public/js/jquery.min.js',
+      'public/js/bootstrap.bundle.min.js',
+      'public/js/dataTables.min.js',
+      'public/js/dataTables.bootstrap5.min.js',
       'public/js/jquery.js',
       'public/js/bootstrap.min.js',
-      'bin/logger.js',
-      'bin/log.sh',
     ],
   },
   {
