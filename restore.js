@@ -1,27 +1,24 @@
-//load database
-var Datastore = require('nedb');
-var crontab = require("./crontab");
-var path = require("path");
+'use strict';
 
-var exec = require('child_process').exec;
-var fs = require('fs');
+const Datastore = require('@seald-io/nedb');
+const path = require('path');
+const fs = require('fs');
+const crontab = require('./crontab');
 
-exports.crontabs = function(db_name, callback){
-	var db = new Datastore({filename: path.join(crontab.db_folder, db_name)});
-	db.loadDatabase(function (err) {
-	});
-	db.find({}).sort({ created: -1 }).exec(function(err, docs){
-		callback(docs);
-	});
+exports.crontabs = (dbName, callback) => {
+  const db = new Datastore({ filename: path.join(crontab.db_folder, dbName) });
+  db.loadDatabase(() => {});
+  db.find({}).sort({ created: -1 }).exec((err, docs) => {
+    callback(docs);
+  });
 };
 
-exports.delete = function(db_name){
-	fs.unlink(path.join(crontab.db_folder, db_name), function(err){
-		if(err) {
-			return console.log("Delete error: " + err);
-		}
-		else{
-			console.log("Backup deleted");
-		}
-	});
+exports.delete = (dbName) => {
+  fs.unlink(path.join(crontab.db_folder, dbName), (err) => {
+    if (err) {
+      console.log(`Delete error: ${err}`);
+    } else {
+      console.log('Backup deleted');
+    }
+  });
 };

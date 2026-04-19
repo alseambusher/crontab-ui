@@ -1,29 +1,34 @@
-// base url
-var base_url = (process.env.BASE_URL == undefined ? '' : process.env.BASE_URL);
-base_url = base_url.replace(/\/+$/, "").trim();
+'use strict';
 
-exports.base_url = base_url;
+const baseUrl = (process.env.BASE_URL || '').replace(/\/+$/, '').trim();
 
-var routes = {
-	"root": "/",
-	"save": "/save",
-	"run": "/runjob",
-	"crontab": "/crontab",
-	"stop": "/stop",
-	"start": "/start",
-	"remove": "/remove",
-	"backup": "/backup",
-	"restore": "/restore",
-	"delete_backup": "/delete",
-	"restore_backup": "/restore_backup",
-	"export": "/export",
-	"import": "/import", // this is import from database
-	"import_crontab": "/import_crontab", // this is from existing crontab
-	"logger": "/logger",
-	"stdout": "/stdout",
+const routes = {
+  root: '/',
+  save: '/save',
+  run: '/runjob',
+  crontab: '/crontab',
+  stop: '/stop',
+  start: '/start',
+  remove: '/remove',
+  backup: '/backup',
+  restore: '/restore',
+  delete_backup: '/delete',
+  restore_backup: '/restore_backup',
+  export: '/export',
+  import: '/import',
+  import_crontab: '/import_crontab',
+  logger: '/logger',
+  stdout: '/stdout',
+  view_crontab: '/view_crontab',
 };
 
-exports.routes = Object.keys(routes).reduce((p, c) => ({...p, [c]: base_url + routes[c]}), {});
+exports.base_url = baseUrl;
 
-exports.relative = Object.keys(routes).reduce((p, c) => ({...p, [c]: routes[c].replace(/^\//, '')}), {});
-exports.relative["root"] = base_url;
+exports.routes = Object.fromEntries(
+  Object.entries(routes).map(([k, v]) => [k, baseUrl + v])
+);
+
+exports.relative = Object.fromEntries(
+  Object.entries(routes).map(([k, v]) => [k, v.replace(/^\//, '')])
+);
+exports.relative.root = baseUrl;

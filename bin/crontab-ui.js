@@ -1,3 +1,4 @@
 #!/usr/bin/env node
+'use strict';
 
-var crontab = require('../app.js');
+require('../app.js');
