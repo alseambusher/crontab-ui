@@ -1,27 +1,37 @@
 {
   "name": "crontab-ui",
-  "version": "0.3.16",
+  "version": "0.4.0",
   "description": "Easy and safe way to manage your crontab file",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "node tests/test.js"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "body-parser": "latest",
-    "connect-busboy": "latest",
-    "cron-parser": "latest",
-    "cronstrue": "latest",
-    "ejs": "latest",
-    "express": "latest",
-    "express-basic-auth": "^1.2.0",
-    "mime-types": "latest",
-    "moment": "latest",
-    "nedb": "latest",
-    "nodemailer": "^6.7.3"
+    "@seald-io/nedb": "^4.1.2",
+    "connect-busboy": "^1.0.0",
+    "cron-parser": "^5.5.0",
+    "cronstrue": "^3.14.0",
+    "dayjs": "^1.11.20",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "express-basic-auth": "^1.2.1",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "mime-types": "^3.0.2",
+    "nodemailer": "^8.0.5"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.0",
+    "supertest": "^7.1.0",
+    "vitest": "^3.1.0"
   },
   "engines": {
-    "node": ">=15.0.0"
+    "node": ">=20.0.0"
   },
   "bin": {
     "crontab-ui": "bin/crontab-ui.js",

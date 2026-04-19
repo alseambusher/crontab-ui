@@ -1,34 +1,37 @@
 # docker run -d -p 8000:8000 alseambusher/crontab-ui
-FROM alpine:3.15.3
+FROM node:22-alpine AS build
 
-ENV   CRON_PATH /etc/crontabs
+WORKDIR /crontab-ui
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-RUN   mkdir /crontab-ui; touch $CRON_PATH/root; chmod +x $CRON_PATH/root
+FROM node:22-alpine
+
+ENV   CRON_PATH=/etc/crontabs
+RUN   touch $CRON_PATH/root && chmod +x $CRON_PATH/root
+
+RUN   apk --no-cache add \
+      curl \
+      supervisor \
+      tini \
+      tzdata
 
 WORKDIR /crontab-ui
 
-LABEL maintainer "@alseambusher"
-LABEL description "Crontab-UI docker"
+LABEL maintainer="@alseambusher"
+LABEL description="Crontab-UI docker"
 
-RUN   apk --no-cache add \
-      wget \
-      curl \
-      nodejs \
-      npm \
-      supervisor \
-      tzdata
+COPY --from=build /crontab-ui/node_modules ./node_modules
+COPY . .
 
-COPY supervisord.conf /etc/supervisord.conf
-COPY . /crontab-ui
-
-RUN   npm install
-
-ENV   HOST 0.0.0.0
-
-ENV   PORT 8000
-
-ENV   CRON_IN_DOCKER true
+ENV   HOST=0.0.0.0
+ENV   PORT=8000
+ENV   CRON_IN_DOCKER=true
 
 EXPOSE $PORT
 
-CMD ["supervisord", "-c", "/etc/supervisord.conf"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT}/ || exit 1
+
+ENTRYPOINT ["/sbin/tini", "--"]
+CMD ["supervisord", "-c", "/crontab-ui/supervisord.conf"]

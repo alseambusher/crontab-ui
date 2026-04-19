@@ -1,19 +1,23 @@
 <!doctype html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crontab UI</title>
-<script src="jquery.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-icons.min.css" rel="stylesheet">
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
 <script src="script.js"></script>
-<script src="bootstrap.min.js"></script>
-<link rel="stylesheet" href="css/bootstrap.min.css" />
 <script type="text/javascript">
 	var crontabs = [];
 	var routes = [];
-	$(function () {
-		// initialize tooltips
-		$('[data-toggle="tooltip"]').tooltip();
+	document.addEventListener('DOMContentLoaded', function() {
+		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+		tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
 		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"").replace(/\'/g,"\\\'") %>');
 		routes = JSON.parse('<%- routes %>');
-	})
+	});
 </script>
 </head>
 <body>
@@ -30,11 +34,10 @@
 	</tr>
 	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
-		<!-- color based on crontab state -->
 		<% if (!crontab.stopped) { %>
 			<tr>
 		<% } else { %>
-			<tr style="background:#3A6DA6;color:#fff">
+			<tr class="table-primary">
 		<% } %>
 
 				<td>
@@ -45,7 +48,7 @@
 
 				<td>
 					<% if (crontab.name) { %>
-					<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.name %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+					<a class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="<%= crontab.name %>"><i class="bi bi-info-circle"></i></a>
 					<% } %>
 				</td>
 				<td><%= crontab.command %></td>
@@ -57,8 +60,8 @@
 
 
 	</table>
-	<a class="btn btn-primary" onclick="restore_backup('<%= db %>')"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Restore</a>
-	<a class="btn btn-danger" onclick="delete_backup('<%= db %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> Delete</a>
+	<a class="btn btn-primary" onclick="restore_backup('<%= db %>')"><i class="bi bi-arrow-counterclockwise"></i> Restore</a>
+	<a class="btn btn-danger" onclick="delete_backup('<%= db %>')"><i class="bi bi-trash"></i> Delete</a>
 </div>
 <%- include('popup.ejs') -%>
 </body>

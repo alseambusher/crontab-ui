@@ -1,45 +1,50 @@
 <!doctype html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Crontab UI</title>
-<script src="jquery.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-icons.min.css" rel="stylesheet">
+<link href="css/dataTables.bootstrap5.min.css" rel="stylesheet">
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.bundle.min.js"></script>
+<script src="js/dataTables.min.js"></script>
+<script src="js/dataTables.bootstrap5.min.js"></script>
 <script src="script.js"></script>
-<script src="bootstrap.min.js"></script>
 <script src="mailconfig.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/v/bs/dt-1.10.12/datatables.min.js"></script>
-<link rel="stylesheet" href="css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css"/>
 <script type="text/javascript">
 	var crontabs = [];
 	var routes = [];
-	$(function () {
-		// initialize tooltips
-		$('[data-toggle="tooltip"]').tooltip();
+	document.addEventListener('DOMContentLoaded', function() {
+		var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+		tooltipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
 		crontabs = JSON.parse('<%- crontabs.replace(/\\\\/g, "\\\\\\\\").replace(/\\\"/g,"\\\\\"").replace(/\'/g,"\\\'").replace(/\\t/g, " ") %>');
 		routes = JSON.parse('<%- routes %>');
 		$("#env_vars").val(`<%- env  %>`);
-	})
+	});
 </script>
 </head>
 <body>
 <%- include('navbar.ejs') -%>
 <div class="container-fluid">
 	<h2>Cronjobs</h2>
-	<div class="form-group">
-		<label for="env_vars">Environment Variables:</label>
+	<div class="mb-3">
+		<label for="env_vars" class="form-label">Environment Variables:</label>
 		<textarea class="form-control" rows="3" id="env_vars" placeholder="# Please set PATH, MAILTO, HOME... here"></textarea>
 	</div>
-	<a class="btn btn-primary" onclick="newJob();"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New</a>
-	<a class="btn btn-info" onclick="doBackup();"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span> Backup</a>
-	<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
-		<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
-	</form>
-	<a class="btn btn-warning" onclick="import_db()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import</a>
-	<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export</a>
-	<!--<a class="btn btn-info" onclick="import_crontab()"><span class="glyphicon glyphicon-import" aria-hidden="true"></span> Import from crontab</a>-->
-	<a class="btn btn-success" onclick="getCrontab();"><span class="glyphicon glyphicon-open" aria-hidden="true"></span> Get from crontab</a>
-	<a class="btn btn-success" onclick="setCrontab();"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save to crontab</a>
-	<br/>
-	<br/>
+	<div class="mb-3">
+		<a class="btn btn-primary" onclick="newJob();"><i class="bi bi-plus-circle"></i> New</a>
+		<a class="btn btn-info" onclick="doBackup();"><i class="bi bi-download"></i> Backup</a>
+		<form id="import_form" enctype="multipart/form-data" action="<%= JSON.parse(routes).import %>" method="post" style="display:none">
+			<input type="file" id="import_file" name="import_file" onchange="$('#import_form').submit()"/>
+		</form>
+		<a class="btn btn-warning" onclick="import_db()"><i class="bi bi-box-arrow-in-down"></i> Import</a>
+		<a class="btn btn-warning" href="<%= JSON.parse(routes).export %>"><i class="bi bi-box-arrow-up"></i> Export</a>
+		<a class="btn btn-success" onclick="getCrontab();"><i class="bi bi-arrow-down-circle"></i> Get from crontab</a>
+		<a class="btn btn-success" onclick="setCrontab();"><i class="bi bi-save"></i> Save to crontab</a>
+		<a class="btn btn-outline-secondary" onclick="viewCrontab();"><i class="bi bi-code-square"></i> View crontab</a>
+	</div>
 
 	<table class="table table-striped" id="main_table">
 		<thead>
@@ -55,11 +60,10 @@
 <tbody>
 	<% var index = 1 %>
 	<% JSON.parse(crontabs).forEach(function(crontab){ %>
-		<!-- color based on crontab state -->
 		<% if (!crontab.stopped) { %>
 			<tr>
 		<% } else { %>
-			<tr style="background:#3A6DA6;color:#fff">
+			<tr class="table-primary">
 		<% } %>
 				<td>
 					<%= index %>.
@@ -69,12 +73,12 @@
 				<td>
 					<% if (crontab.name) { %>
 						<%= crontab.name %>
-						<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab._id %>"><span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span> </a>
+						<a class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="<%= crontab._id %>"><i class="bi bi-info-circle"></i></a>
 						<% if (crontab.saved) { %>
-							<span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>
+							<i class="bi bi-check-circle text-success"></i>
 						<% } else { %>
-							<a data-toggle="tooltip" data-placement="right" title="'Save to crontab' to deploy">
-								<span class="glyphicon glyphicon-floppy-remove" aria-hidden="true"></span>
+							<a data-bs-toggle="tooltip" data-bs-placement="right" title="'Save to crontab' to deploy">
+								<i class="bi bi-exclamation-circle text-warning"></i>
 							</a>
 						<% } %>
 					<% } else { %>
@@ -83,29 +87,29 @@
 				</td>
 				<td><%= crontab.command %></td>
 				<td>
-					<span style="cursor:pointer" data-toggle="tooltip" data-placement="bottom" title="<%= crontab.next %>">
+					<span style="cursor:pointer" data-bs-toggle="tooltip" data-bs-placement="bottom" title="<%= crontab.next %>">
 							<%= crontab.schedule %>
 					</span>
-					<a class="btn" data-toggle="tooltip" data-placement="right" title="<%= crontab.human %>">
-						<span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+					<a class="btn btn-sm" data-bs-toggle="tooltip" data-bs-placement="right" title="<%= crontab.human %>">
+						<i class="bi bi-info-circle"></i>
 					</a>
 				</td>
-				<td style="width:20%" title="<%= crontab.timestamp %>"><%= moment(new Date(crontab.timestamp)).fromNow() %></td>
+				<td style="width:20%" title="<%= crontab.timestamp %>"><%= dayjs(new Date(crontab.timestamp)).fromNow() %></td>
 				<td>
 
-		<!-- controls based on crontab state -->
 		<% if (!crontab.stopped) { %>
 			<% if (crontab.logging && crontab.logging != "false") {%>
-					<a class="btn btn-primary btn-danger" data-toggle="tooltip" data-placement="left" title="stderr" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
-					<a class="btn btn-primary" data-toggle="tooltip" data-placement="left" title="stdout" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span></a>
+					<a class="btn btn-sm btn-danger" data-bs-toggle="tooltip" data-bs-placement="left" title="stderr" href="<%= JSON.parse(routes).logger + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
+					<a class="btn btn-sm btn-primary" data-bs-toggle="tooltip" data-bs-placement="left" title="stdout" href="<%= JSON.parse(routes).stdout + '?id=' + crontab._id %>" target="_blank"><i class="bi bi-journal-text"></i></a>
 			<% } %>
-					<a class="btn btn-info" onclick="runJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Run now</a>
-					<a class="btn btn-primary" onclick="editJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Edit</a>
-					<a class="btn btn-info" onclick="stopJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-stop" aria-hidden="true"></span> Disable</a>
+					<a class="btn btn-sm btn-info" onclick="runJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i> Run now</a>
+					<a class="btn btn-sm btn-primary" onclick="editJob('<%= crontab._id %>')"><i class="bi bi-pencil-square"></i> Edit</a>
+					<a class="btn btn-sm btn-secondary" onclick="stopJob('<%= crontab._id %>')"><i class="bi bi-stop-fill"></i> Disable</a>
 		<% } else { %>
-					<a class="btn btn-info" onclick="startJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> Enable</a>
+					<a class="btn btn-sm btn-info" onclick="startJob('<%= crontab._id %>')"><i class="bi bi-play-fill"></i> Enable</a>
 		<% } %>
-					<a class="btn btn-danger" onclick="deleteJob('<%= crontab._id %>')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a>
+					<a class="btn btn-sm btn-warning" onclick="duplicateJob('<%= crontab._id %>')"><i class="bi bi-copy"></i></a>
+					<a class="btn btn-sm btn-danger" onclick="deleteJob('<%= crontab._id %>')"><i class="bi bi-trash"></i></a>
 				</td>
 			</tr>
 	<% }); %>
@@ -116,9 +120,9 @@
 </div>
 <%- include('popup.ejs') -%>
 <script>
-   jQuery(function($) {
+   document.addEventListener('DOMContentLoaded', function() {
    	$('#main_table').DataTable({
-   		order: [1, 'asc'],
+   		order: [[1, 'asc']],
    		columns: [
    			{orderable: false},
    			null,

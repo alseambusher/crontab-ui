@@ -1,14 +1,13 @@
-/*jshint esversion: 6*/
-// refer nodemailer for more info
+'use strict';
 
 var transporterStr = 'smtps://user%40gmail.com:password@smtp.gmail.com';
 
 var mailOptions = {
-    from: '"Fred Foo 👥" <foo@blurdybloop.com>', // sender address
-    to: 'bar@blurdybloop.com, baz@blurdybloop.com', // list of receivers
-    subject: 'Job Test#21 Executed ✔', // Subject line
-    text: 'Test#21 results attached 🐴', // plaintext body
-    html: '<b>Test#21 🐴</b> results attached' // html body
+  from: '"Fred Foo" <foo@blurdybloop.com>',
+  to: 'bar@blurdybloop.com, baz@blurdybloop.com',
+  subject: 'Job Test#21 Executed',
+  text: 'Test#21 results attached',
+  html: '<b>Test#21</b> results attached'
 };
 
 if (typeof window === 'undefined') {

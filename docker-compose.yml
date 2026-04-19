@@ -1,9 +1,17 @@
-version: '3.7'
-
 services:
   crontab-ui:
     build: .
     image: alseambusher/crontab-ui
-    network_mode: bridge
     ports:
-      - 8000:8000
+      - "8000:8000"
+    volumes:
+      - crontab-data:/crontab-ui/crontabs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  crontab-data:

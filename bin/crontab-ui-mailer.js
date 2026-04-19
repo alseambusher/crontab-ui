@@ -1,19 +1,26 @@
 #!/usr/bin/env node
+'use strict';
 
-var defaults = require("../config/mailconfig.js");
-var crontab = require("../crontab.js");
-var nodemailer = require('nodemailer');
+const crontab = require('../crontab.js');
+const nodemailer = require('nodemailer');
 
-crontab.get_crontab(process.argv[process.argv.length -1 -2], function(job){
-  var transporter = nodemailer.createTransport(job.mailing.transporterStr);
-  var mailOptions = job.mailing.mailOptions;
+const jobId = process.argv[process.argv.length - 3];
+const stdoutPath = process.argv[process.argv.length - 2];
+const stderrPath = process.argv[process.argv.length - 1];
 
-  mailOptions.attachments = [{filename: "stdout.txt", path: process.argv[process.argv.length -1 -1]}, {filename: "stderr.txt", path: process.argv[process.argv.length -1]}];
+crontab.get_crontab(jobId, (job) => {
+  const transporter = nodemailer.createTransport(job.mailing.transporterStr);
+  const mailOptions = job.mailing.mailOptions;
 
-  transporter.sendMail(mailOptions, function(error, info){
-    if(error){
+  mailOptions.attachments = [
+    { filename: 'stdout.txt', path: stdoutPath },
+    { filename: 'stderr.txt', path: stderrPath },
+  ];
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
       return console.log(error);
     }
-    console.log('Message sent: ' + info.response);
+    console.log(`Message sent: ${info.response}`);
   });
 });
