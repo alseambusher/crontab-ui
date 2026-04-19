@@ -93,7 +93,7 @@ function setCrontab() {
 
 function getCrontab() {
   messageBox(
-    '<p> Do you want to get the crontab file? <br /> <b class="text-danger">NOTE: It is recommended to take a backup before this.</b> And refresh the page after this.</p>',
+    '<p> Do you want to get the crontab file? <br /> A backup will be created automatically before importing.</p>',
     'Confirm crontab retrieval', null, null, function() {
       $.get(routes.import_crontab, { 'env_vars': $('#env_vars').val() }, function() {
         infoMessageBox('Successfully got the crontab file!', 'Information');
@@ -138,7 +138,7 @@ function editJob(_id) {
     var name = $('#job-name').val();
     var mailing = JSON.parse($('#job-mailing').attr('data-json'));
     var logging = $('#job-logging').prop('checked');
-    $.post(routes.save, {name: name, command: job_command, schedule: schedule, _id: _id, logging: logging, mailing: mailing}, function() {
+    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: _id, logging: logging, mailing: mailing}, function() {
       location.reload();
     });
     getModal('job').hide();
@@ -169,7 +169,7 @@ function newJob() {
     var name = $('#job-name').val();
     var mailing = JSON.parse($('#job-mailing').attr('data-json'));
     var logging = $('#job-logging').prop('checked');
-    $.post(routes.save, {name: name, command: job_command, schedule: schedule, _id: -1, logging: logging, mailing: mailing}, function() {
+    $.post(routes.save, {name: name, command: collapsedCommand(), schedule: schedule, _id: -1, logging: logging, mailing: mailing}, function() {
       location.reload();
     });
     getModal('job').hide();
@@ -225,7 +225,7 @@ function restore_backup(db_name) {
 
 function import_db() {
   messageBox(
-    '<p> Do you want to import crontab?<br /> <b class="text-danger">NOTE: It is recommended to take a backup before this.</b> </p>',
+    '<p> Do you want to import crontab?<br /> A backup will be created automatically before importing.</p>',
     'Confirm import from crontab', null, null, function() {
       $('#import_file').click();
     });
@@ -306,9 +306,14 @@ function setHookConfig(a) {
   messageBox('<p>Coming Soon</p>', 'Hooks', null, null, null);
 }
 
+function collapsedCommand() {
+  return job_command.split(/\r?\n/).map(function(l) { return l.trim(); }).filter(Boolean).join('; ');
+}
+
 function job_string() {
-  $('#job-string').val(schedule + ' ' + job_command);
-  return schedule + ' ' + job_command;
+  var cmd = collapsedCommand();
+  $('#job-string').val(schedule + ' ' + cmd);
+  return schedule + ' ' + cmd;
 }
 
 function set_schedule() {

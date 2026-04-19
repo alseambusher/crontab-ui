@@ -10,7 +10,7 @@
 	<label class="form-label">Name (Optional)</label>
 	<input type='text' class='form-control' id='job-name'/><br />
 	<label class="form-label">Command</label>
-	<input type='text' class='form-control' id='job-command' onkeyup="job_command = $(this).val(); job_string();"/><br />
+	<textarea class='form-control' id='job-command' rows='3' oninput="job_command = $(this).val(); job_string();"></textarea><br />
 	<label class="form-label">Quick Schedule</label><br />
 	<div class="d-flex flex-wrap gap-2 mb-3">
 		<a class="btn btn-primary btn-sm" onclick="schedule = '* * * * *'; job_string();">Every Minute</a>

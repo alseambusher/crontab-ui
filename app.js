@@ -163,21 +163,27 @@ app.get(routes.export, (req, res) => {
   fs.createReadStream(file).pipe(res);
 });
 
-app.post(routes.import, (req, res) => {
-  req.pipe(req.busboy);
-  req.busboy.on('file', (_fieldname, file) => {
-    const fstream = fs.createWriteStream(crontab.crontab_db_file);
-    file.pipe(fstream);
-    fstream.on('close', () => {
-      crontab.reload_db();
-      res.redirect(routes.root);
+app.post(routes.import, (req, res, next) => {
+  crontab.backup((err) => {
+    if (err) return next(err);
+    req.pipe(req.busboy);
+    req.busboy.on('file', (_fieldname, file) => {
+      const fstream = fs.createWriteStream(crontab.crontab_db_file);
+      file.pipe(fstream);
+      fstream.on('close', () => {
+        crontab.reload_db();
+        res.redirect(routes.root);
+      });
     });
   });
 });
 
-app.get(routes.import_crontab, (req, res) => {
-  crontab.import_crontab();
-  res.end();
+app.get(routes.import_crontab, (req, res, next) => {
+  crontab.backup((err) => {
+    if (err) return next(err);
+    crontab.import_crontab();
+    res.end();
+  });
 });
 
 app.get(routes.view_crontab, (req, res) => {
@@ -189,9 +195,11 @@ app.get(routes.view_crontab, (req, res) => {
 
 function sendLog(filePath, req, res) {
   if (fs.existsSync(filePath)) {
+    res.type('text/plain');
+    res.set('Cache-Control', 'no-store');
     res.sendFile(filePath);
   } else {
-    res.end('No errors logged yet');
+    res.type('text/plain').send('No errors logged yet');
   }
 }
 
