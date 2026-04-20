@@ -17,3 +17,5 @@ __Where is my root node_modules folder__ - You can find it by `npm root -g`
 __Mailing related issue__ - Refer [this](http://lifepluslinux.blogspot.com/2017/03/introducing-mailing-in-crontab-ui.html).
 
 __Run crontab-ui as a daemon__ - Install [pm2](https://github.com/Unitech/pm2) using `npm install -g pm2`. Then just run `pm2 start crontab-ui`
+
+__Long commands are silently truncated__ - Crontab has a hard limit of 1000 characters per line. Crontab-ui's logging and mailing wrappers add ~500 characters of overhead, leaving roughly 400-500 characters for your actual command. If your command is long, put it in a script file and call that instead (e.g., `bash /path/to/script.sh`).
