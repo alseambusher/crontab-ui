@@ -18,7 +18,6 @@ Editing the plain text crontab is error prone for managing jobs, e.g., adding jo
 4. Export crontab and deploy on other machines without much hassle.
 5. Error log support.
 6. Mailing and hooks support.
-7. Multi-line command input for complex jobs.
 
 Read [this](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html) to see more details.
 
