@@ -19,7 +19,7 @@ const routes = {
   import_crontab: '/import_crontab',
   logger: '/logger',
   stdout: '/stdout',
-  view_crontab: '/view_crontab',
+  preview_crontab: '/preview_crontab',
 };
 
 exports.base_url = baseUrl;
