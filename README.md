@@ -18,6 +18,7 @@ Editing the plain text crontab is error prone for managing jobs, e.g., adding jo
 4. Export crontab and deploy on other machines without much hassle.
 5. Error log support.
 6. Mailing and hooks support.
+7. Multi-line command input for complex jobs.
 
 Read [this](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html) to see more details.
 
@@ -52,7 +53,7 @@ If you need to autosave your changes to crontab directly:
 
     crontab-ui --autosave
 
-### List of ennvironment variables supported
+### List of environment variables supported
 - HOST
 - PORT
 - BASE_URL
@@ -125,7 +126,7 @@ If you want to run the same jobs on multiple machines simply export from one ins
 
 ![export](https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/import_db.png)
 
-But make sure to take a backup before importing.
+A backup is created automatically before importing.
 
 ### Separate error log support for every job
 ![logs](https://github.com/alseambusher/crontab-ui/raw/gh-pages/screenshots/log.gif)
