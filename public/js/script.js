@@ -321,17 +321,17 @@ function set_schedule() {
   job_string();
 }
 
-function viewCrontab() {
-  $.get(routes.view_crontab, function(data) {
-    document.getElementById('view-crontab-content').textContent = data || '# (empty crontab)';
-    getModal('view-crontab-modal').show();
+function previewCrontab() {
+  $.get(routes.preview_crontab, function(data) {
+    document.getElementById('preview-crontab-content').textContent = data || '# (empty crontab)';
+    getModal('preview-crontab-modal').show();
   });
 }
 
 function copyCrontab() {
-  var text = document.getElementById('view-crontab-content').textContent;
+  var text = document.getElementById('preview-crontab-content').textContent;
   navigator.clipboard.writeText(text).then(function() {
-    var btn = document.querySelector('#view-crontab-modal .btn-outline-secondary');
+    var btn = document.querySelector('#preview-crontab-modal .btn-outline-secondary');
     btn.innerHTML = '<i class="bi bi-check2"></i> Copied!';
     setTimeout(function() {
       btn.innerHTML = '<i class="bi bi-clipboard"></i> Copy';

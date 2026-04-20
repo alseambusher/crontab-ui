@@ -186,7 +186,7 @@ app.get(routes.import_crontab, (req, res, next) => {
   });
 });
 
-app.get(routes.view_crontab, (req, res) => {
+app.get(routes.preview_crontab, (req, res) => {
   const envVars = crontab.get_env();
   crontab.preview_crontab(envVars, (result) => {
     res.type('text/plain').send(result);

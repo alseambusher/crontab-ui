@@ -122,16 +122,16 @@ describe('Crontab UI', () => {
     });
   });
 
-  describe('GET /view_crontab', () => {
+  describe('GET /preview_crontab', () => {
     it('should return the crontab preview as plain text', async () => {
-      const res = await request(app).get('/view_crontab');
+      const res = await request(app).get('/preview_crontab');
       expect(res.status).toBe(200);
       expect(res.headers['content-type']).toContain('text/plain');
       expect(res.text).toContain('echo hello');
     });
 
     it('should include the make_command wrapper (tee pipeline)', async () => {
-      const res = await request(app).get('/view_crontab');
+      const res = await request(app).get('/preview_crontab');
       expect(res.text).toContain('tee');
       expect(res.text).toContain('stderr');
     });
@@ -143,7 +143,7 @@ describe('Crontab UI', () => {
 
       await request(app).post('/stop').send({ _id: match[1] });
 
-      const res = await request(app).get('/view_crontab');
+      const res = await request(app).get('/preview_crontab');
       const lines = res.text.trim().split('\n').filter((l) => l.includes('echo hello'));
       const activePage = await request(app).get('/');
       const activeCount = (activePage.text.match(/stopJob\('/g) || []).length;

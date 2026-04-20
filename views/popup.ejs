@@ -92,15 +92,16 @@
   </div>
 </div>
 
-<div class="modal fade" id="view-crontab-modal" tabindex="-1">
+<div class="modal fade" id="preview-crontab-modal" tabindex="-1">
   <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"><i class="bi bi-code-square"></i> Current Crontab</h5>
+        <h5 class="modal-title"><i class="bi bi-code-square"></i> Crontab Preview</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <pre id="view-crontab-content" class="bg-dark text-light p-3 rounded" style="min-height:200px;white-space:pre-wrap;word-break:break-all;font-size:0.875rem;"></pre>
+        <div class="alert alert-warning mb-3"><i class="bi bi-exclamation-triangle"></i> This is a preview of what will be deployed. It may differ from the currently active crontab if you have unsaved changes.</div>
+        <pre id="preview-crontab-content" class="bg-dark text-light p-3 rounded" style="min-height:200px;white-space:pre-wrap;word-break:break-all;font-size:0.875rem;"></pre>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-outline-secondary" onclick="copyCrontab()"><i class="bi bi-clipboard"></i> Copy</button>
