@@ -1,9 +1,10 @@
-VER=0.4.2
+VER=0.4.3
+PLATFORMS=linux/amd64,linux/arm64
 
 release:
 	sed -i '' "s/version\": \".*/version\": \"$(VER)\",/" package.json
 	npm publish
-	docker build -t alseambusher/crontab-ui .
-	docker tag alseambusher/crontab-ui alseambusher/crontab-ui:$(VER)
-	docker push alseambusher/crontab-ui:latest
-	docker push alseambusher/crontab-ui:$(VER)
+	docker buildx build --platform $(PLATFORMS) \
+		-t alseambusher/crontab-ui:latest \
+		-t alseambusher/crontab-ui:$(VER) \
+		--push .
