@@ -135,6 +135,21 @@
         	stateDuration: 0
   	});
    });
+   const btnDarkMode = document.getElementById('btnDarkMode');
+   const htmlElement = document.documentElement;
+   const setTheme = (theme) => {
+	htmlElement.setAttribute('data-bs-theme', theme);
+	localStorage.setItem('theme', theme);
+   };
+   btnDarkMode.addEventListener('click', () => {
+	const currentTheme = htmlElement.getAttribute('data-bs-theme');
+	const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+	setTheme(newTheme);
+   });
+   const savedTheme = localStorage.getItem('theme');
+   if (savedTheme) {
+	setTheme(savedTheme);
+   }
  </script>
 </body>
 </html>
