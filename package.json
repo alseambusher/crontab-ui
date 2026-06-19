@@ -21,7 +21,7 @@
     "express-rate-limit": "^8.3.2",
     "helmet": "^8.1.0",
     "mime-types": "^3.0.2",
-    "nodemailer": "^8.0.5"
+    "nodemailer": "^9.0.1"
   },
   "devDependencies": {
     "eslint": "^9.0.0",
