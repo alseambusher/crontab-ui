@@ -1,7 +1,7 @@
 services:
   crontab-ui:
     build: .
-    image: alseambusher/crontab-ui
+    image: ghcr.io/alseambusher/crontab-ui
     ports:
       - "8000:8000"
     volumes:
