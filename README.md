@@ -5,6 +5,7 @@ Crontab UI
 [![npm](https://img.shields.io/npm/v/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dt/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/dm/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
+[![GHCR](https://img.shields.io/badge/GitHub%20Container%20Registry-alseambusher%2Fcrontab--ui-blue?style=flat-square&logo=github)](https://github.com/alseambusher/crontab-ui/pkgs/container/crontab-ui)
 [![npm](https://img.shields.io/docker/pulls/alseambusher/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 [![npm](https://img.shields.io/npm/l/crontab-ui.svg?style=flat-square)](https://lifepluslinux.blogspot.com/2015/06/crontab-ui-easy-and-safe-way-to-manage.html)
 
@@ -64,34 +65,34 @@ If you need to autosave your changes to crontab directly:
 
 
 ## Docker
-You can use crontab-ui with docker. You can use the prebuilt images in the [dockerhub](https://hub.docker.com/r/alseambusher/crontab-ui/tags)
+You can use crontab-ui with docker. You can use the prebuilt images from the [GitHub Container Registry](https://github.com/alseambusher/crontab-ui/pkgs/container/crontab-ui)
 ```bash
-docker run -d -p 8000:8000 alseambusher/crontab-ui
+docker run -d -p 8000:8000 ghcr.io/alseambusher/crontab-ui
 ```
 
 You can also build it yourself if you want to customize, like this:
 ```bash
 git clone https://github.com/alseambusher/crontab-ui.git
 cd crontab-ui
-docker build -t alseambusher/crontab-ui .
-docker run -d -p 8000:8000 alseambusher/crontab-ui
+docker build -t ghcr.io/alseambusher/crontab-ui .
+docker run -d -p 8000:8000 ghcr.io/alseambusher/crontab-ui
 ```
 
 If you want to use it with authentication, You can pass `BASIC_AUTH_USER` and `BASIC_AUTH_PWD` as env variables
 ```bash
-docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=SecretPassword -d -p 8000:8000 alseambusher/crontab-ui 
+docker run -e BASIC_AUTH_USER=user -e BASIC_AUTH_PWD=SecretPassword -d -p 8000:8000 ghcr.io/alseambusher/crontab-ui 
 ```
 
 You can also mount a folder to store the db and logs.
 ```bash
 mkdir -p crontabs/logs
-docker run --mount type=bind,source="$(pwd)"/crontabs/,target=/crontab-ui/crontabs/ -d -p 8000:8000 alseambusher/crontab-ui
+docker run --mount type=bind,source="$(pwd)"/crontabs/,target=/crontab-ui/crontabs/ -d -p 8000:8000 ghcr.io/alseambusher/crontab-ui
 ```
 
 If you are looking to modify the host's crontab, you would have to mount the crontab folder of your host to that of the container. 
 ```bash
 # On Ubuntu, it can look something like this and /etc/cron.d/root is used
-docker run -d -p 8000:8000 -v /etc/cron.d:/etc/crontabs alseambusher/crontab-ui
+docker run -d -p 8000:8000 -v /etc/cron.d:/etc/crontabs ghcr.io/alseambusher/crontab-ui
 ```
 
     
