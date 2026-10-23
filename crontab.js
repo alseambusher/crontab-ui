@@ -246,7 +246,8 @@ exports.import_crontab = () => {
 
       let isValid = false;
       try {
-        isValid = CronExpressionParser.parse(schedule) !== null;
+        // @reboot has no next occurrence for cron-parser to calculate.
+        isValid = schedule === '@reboot' || CronExpressionParser.parse(schedule) !== null;
       } catch (_e) { /* ignore */ }
 
       if (command && schedule && isValid) {
